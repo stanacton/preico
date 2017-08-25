@@ -1,4 +1,4 @@
-# preico
+# PRE ICO Project
 
 ## Vagrant machine
 All the devtools are installed in the happy easy to use lovely vagrant file.  
