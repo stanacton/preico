@@ -1,8 +1,8 @@
-var ConvertLib = artifacts.require("./ConvertLib.sol");
-var MetaCoin = artifacts.require("./MetaCoin.sol");
+var ERC20 = artifacts.require("./ERC20.sol");
+var PreICO = artifacts.require("./PreICO.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(ConvertLib);
-  deployer.link(ConvertLib, MetaCoin);
-  deployer.deploy(MetaCoin);
+  deployer.deploy(ERC20);
+  deployer.link(ERC20, PreICO);
+  deployer.deploy(PreICO);
 };
