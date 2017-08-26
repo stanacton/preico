@@ -25,8 +25,15 @@ contract PreICO  { //is ERC20 {
         balance = balances[_owner];
     }
 
-    function transfer(address _to, uint _value) returns (bool success) {
-        revert();
+    function transfer(address _to, uint256 _value) returns (bool success) {
+        if (balances[msg.sender] >= _value && _value > 0 && balances[_to] + _value > balances[_to]) {
+            balances[msg.sender] -= _value;
+            balances[_to] += _value;
+
+            success = true;
+        } else {
+            success = false;
+        }
     }
 
     function transferFrom(address _from, address _to, uint _value) returns (bool success) {
