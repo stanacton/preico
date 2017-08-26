@@ -17,11 +17,11 @@ contract PreICO  { //is ERC20 {
         balances[owner] = _totalSupply;
     }
 
-    function totalSupply() constant returns (uint totalSupply) {
-        totalSupply = _totalSupply;
+    function totalSupply() constant returns (uint256 __totalSupply) {
+        __totalSupply = _totalSupply;
     }
 
-    function balanceOf(address _owner) constant returns (uint balance) {
+    function balanceOf(address _owner) constant returns (uint256 balance) {
         balance = balances[_owner];
     }
 
@@ -31,23 +31,35 @@ contract PreICO  { //is ERC20 {
             balances[_to] += _value;
 
             success = true;
+            Transfer(msg.sender, _to, _value);
         } else {
             success = false;
         }
     }
 
-    function transferFrom(address _from, address _to, uint _value) returns (bool success) {
-        revert();
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+        if (balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0 && balances[_to] + _value > balances[_to]) {
+            balances[_from] -= _value;
+            allowed[_from][msg.sender] -= _value;
+            balances[_to] += _value;
+            success = true;
+
+            Transfer(_from, _to, _value);
+        } else {
+            success = false;
+        }
     }
 
-    function approve(address _spender, uint _value) returns (bool success) {
-        revert();
+    function approve(address _spender, uint256 _value) returns (bool success) {
+        allowed[msg.sender][_spender] = _value;
+        success = true;
+        Approval(msg.sender, _spender, _value);
     }
 
-    function allowance(address _owner, address _spender) constant returns (uint remaining) {
-        revert();
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+        return allowed[_owner][_spender];
     }
     
-  //  event Transfer(address indexed _from, address indexed _to, uint _value);
-  //  event Approval(address indexed _owner, address indexed _spender, uint _value);
+    event Transfer(address indexed _from, address indexed _to, uint _value);
+    event Approval(address indexed _owner, address indexed _spender, uint _value);
 }
