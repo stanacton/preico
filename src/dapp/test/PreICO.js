@@ -16,4 +16,12 @@ contract("PreICO", function(accounts) {
             assert.equal(owner.valueOf(), accounts[0], "The owner wasn't set to the correct person.");
         }); 
     });
+
+    it("should show the correct total supply", function() {
+        return PreICO.deployed.then(function(instance) {
+            return instance.totalSupply.call();
+        }).then(function(_totalSupply) {
+            assert.equal(_totalSupply.valueOf(), 100000, "the total supply was incorret");
+        });
+    });
 });
