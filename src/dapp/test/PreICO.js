@@ -30,19 +30,32 @@ contract("PreICO", function(accounts) {
         var account_from = accounts[0];
         var account_to = accounts[1];
         var result;
+        var watcher, events;
+        var transferAmount = 100;
 
         return PreICO.deployed().then(function(instance) {
             ico = instance;
-            return ico.transfer(account_to, 100, {from: account_from});
+            return ico.Transfer();
+        }).then(function(_watcher) {
+            watcher = _watcher;
+            return ico.transfer(account_to, transferAmount, {from: account_from});
         }).then(function(_result) {
             result = _result;
             return ico.balanceOf.call(account_from);
         }).then(function(_ownerBalance) {
             ownerBalance = _ownerBalance;
+            return watcher.get();
+        }).then(function(_events) {
+            events = _events;
             return ico.balanceOf.call(account_to);
         }).then(function(recBalance) {
             assert.equal(ownerBalance.valueOf(), 999900, "the owner balance did not go down.");
             assert.equal(recBalance.valueOf(), 100, "the receiver balance was incorret");
+
+            assert.equal(events.length, 1, "events didn't contain an transfer event");
+            assert.equal(events[0].args._from.valueOf(), account_from, "the from account was incorrect");
+            assert.equal(events[0].args._to.valueOf(), account_to, "the to account was incorrect");
+            assert.equal(events[0].args._value.valueOf(), transferAmount, "the value was incorrect");
         });
     });
 
@@ -125,9 +138,11 @@ contract("PreICO", function(accounts) {
         var actor = accounts[3];
         var amountToTransfer = 5;
         var allowanceLeft;
+        var watcher, events;
 
         return PreICO.deployed().then(function(instance) {
             ico = instance;
+            watcher = ico.Transfer();
             return ico.balanceOf.call(account_from);
         }).then(function(_fromBalance1) {
             from_balance_before = _fromBalance1.valueOf();
@@ -148,7 +163,8 @@ contract("PreICO", function(accounts) {
             return ico.balanceOf.call(account_to);
         }).then(function(_toBalance) {
             to_balance_after = _toBalance.valueOf();
-            
+            return watcher.get();
+        }).then(function(events) {
             var to_diff = to_balance_after - to_balance_before;
             var from_diff = from_balance_after - from_balance_before;
 
@@ -156,6 +172,11 @@ contract("PreICO", function(accounts) {
             assert.equal(from_diff, 0-amountToTransfer, "the from account should be less");
             assert.equal(to_diff, amountToTransfer, "the to account should have a postive value");
             assert.equal(allowanceLeft, 0, "the allowance of the actor should now be zero");
+
+            assert.equal(events.length, 1, "events didn't contain an transfer event");
+            assert.equal(events[0].args._from.valueOf(), account_from, "events didn't contain an transfer event");
+            assert.equal(events[0].args._to.valueOf(), account_to, "events didn't contain a transfer event");
+            assert.equal(events[0].args._value.valueOf(), amountToTransfer, "events didn't contain an transfer event");
         });
     });
 
@@ -287,9 +308,12 @@ contract("PreICO", function(accounts) {
         var result = undefined;
         var actor = accounts[4]; // IMPORTANT: this must be different to all other tests as the contract is a singleton
         var amountToTransfer = 1;
+        var watcher, events;
 
         return PreICO.deployed().then(function(instance) {
             ico = instance;
+            watcher = ico.Transfer();
+
             return ico.balanceOf.call(account_from);
         }).then(function(_fromBalance1) {
             from_balance_before = _fromBalance1.valueOf();
@@ -303,6 +327,9 @@ contract("PreICO", function(accounts) {
             return ico.balanceOf.call(account_from);
         }).then(function(_fromBalance) {
             from_balance_after = _fromBalance.valueOf();
+            return watcher.get();
+        }).then(function(_events) {
+            events = _events;
             return ico.balanceOf.call(account_to);
         }).then(function(_toBalance) {
             to_balance_after = _toBalance.valueOf();
@@ -313,6 +340,7 @@ contract("PreICO", function(accounts) {
            // assert.equal(result, false, "the return value should have been false");
             assert.equal(from_diff, 0, "the from account balance should not have changed");
             assert.equal(to_diff, 0, "the to account balance should not have changed");
+            assert.equal(events.length, 0, "No event should have been raised");
         });
     });
 
@@ -323,9 +351,12 @@ contract("PreICO", function(accounts) {
         var spendAmount = 10;
         var allowanceBeforeAllocation;
         var allowanceAfterAllocation;
+        var approval_watcher, events;
 
         return PreICO.deployed().then(function(instance) {
             ico = instance;
+            approval_watcher = ico.Approval();
+
             return ico.allowance.call(owner, spender);
         }).then(function(_allowance) {
             allowanceBeforeAllocation = _allowance;
@@ -334,9 +365,15 @@ contract("PreICO", function(accounts) {
             return ico.allowance.call(owner, spender);
         }).then(function(_allowance) {
             allowanceAfterAllocation = _allowance;
-
+            return approval_watcher.get();
+        }).then(function(events) {
             assert.equal(allowanceBeforeAllocation, 0, "The initial allowance amount should be zero");
             assert.equal(allowanceAfterAllocation, spendAmount, "The allocation amount is incorrect.");
+
+            assert.equal(events.length, 1, "events didn't contain an Approval event");
+            assert.equal(events[0].args._owner.valueOf(), owner, "the owner was incorrect");
+            assert.equal(events[0].args._spender.valueOf(), spender, "the spender was incorrect");
+            assert.equal(events[0].args._value.valueOf(), spendAmount, "the value was incorrect");
         });
     });
 });
