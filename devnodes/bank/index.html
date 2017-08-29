@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <h1>Bank</h1>
+
+    <button onclick="deploy()">Deploy Bank!!</button>
+
+    <script src="bower_components/bignumber.js/bignumber.min.js"></script>
+    <script src="bower_components/crypto-js/crypto-js.js"></script>
+    <script src="bower_components/web3/dist/web3.js"></script>
+    <script>
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        }
+        var myDevBank;
+        var DevBankContract = web3.eth.contract([{"constant":false,"inputs":[],"name":"depoist","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_amount","type":"uint256"}],"name":"withdraw","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"current_balance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]);
+        function deploy() {
+            var DevBank = DevBankContract.new(
+            {
+                from: web3.eth.accounts[0], 
+                data: '0x6060604052341561000f57600080fd5b5b61018b8061001f6000396000f30060606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063041bacd2146100545780632e1a7d4d1461005e5780635408cfae14610099575b600080fd5b61005c6100c2565b005b341561006957600080fd5b61007f60048080359060200190919050506100d4565b604051808215151515815260200191505060405180910390f35b34156100a457600080fd5b6100ac610159565b6040518082815260200191505060405180910390f35b3460008082825401925050819055505b565b6000813073ffffffffffffffffffffffffffffffffffffffff163110151561014e573373ffffffffffffffffffffffffffffffffffffffff166108fc839081150290604051600060405180830381858888f19350505050151561013657600080fd5b81600080828254039250508190555060019050610153565b600090505b5b919050565b600054815600a165627a7a7230582003bc8fef8c23248daf12e227f4e9cf70162d07ff1fdf6b0b512274b6ecd90c790029', 
+                gas: '4300000'
+            }, function (e, contract){
+                console.log(e, contract);
+                if (typeof contract.address !== 'undefined') {
+                    console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
+                }
+            });
+        }
+
+        function loadDevbank(address) {
+            myDevBank = DevBankContract.at("");
+        }
+
+        console.log(web3);
+    </script>
+</body>
+</html>
