@@ -2,6 +2,9 @@ geth \
  --nodiscover \
  --networkid 101010 \
  --rpc \
+ --rpcport 8545 \
+ --rpcaddr localhost \
+ --rpcapi "eth,net,web3" \
  --rpccorsdomain "*" \
  --verbosity 4 \
  --port 40303 \
