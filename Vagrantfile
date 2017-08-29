@@ -27,6 +27,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 3000, host: 3333
   config.vm.network "forwarded_port", guest: 4000, host: 4444
   config.vm.network "forwarded_port", guest: 8545, host: 8545
+  config.vm.network "forwarded_port", guest: 30303, host: 30303
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -53,13 +54,13 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
+  config.vm.provider "virtualbox" do |vb|
+     # Display the VirtualBox GUI when booting the machine
+     # vb.gui = true
+  
+     # Customize the amount of memory on the VM:
+     vb.memory = "4096"
+  end
   #
   # View the documentation for the provider you are using for more
   # information on available options.

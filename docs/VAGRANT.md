@@ -13,6 +13,8 @@ It has the following tools installed:
 - solc
 - Truffle
 - Embark
+- Solgraph (security and flow auditing for Solidity) [Docs](https://github.com/raineorshine/solgraph)
+- Doxity (documentation generation for Solidity) [Docs](https://github.com/DigixGlobal/doxity)
 
 ## Current open ports
 - 4000 (Guest) -> 4444 (Host)
