@@ -9,6 +9,13 @@
     <h1>Bank</h1>
 
     <button onclick="deploy()">Deploy Bank!!</button>
+    <button onclick="balance()">Balance</button>
+    <button onclick="deposit()">Deposit</button>
+    <button onclick="withdraw()">Withdraw</button>
+
+    Bank Balance: <span id="balance">0</span><br />
+    Your Balance: <span id="yourbalance">0</span>
+
 
     <script src="bower_components/bignumber.js/bignumber.min.js"></script>
     <script src="bower_components/crypto-js/crypto-js.js"></script>
@@ -18,15 +25,15 @@
             web3 = new Web3(web3.currentProvider);
         } else {
             // set the provider you want from Web3.providers
-            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+ //           web3 = new Web3(new Web3.providers.HttpProvider("http://testnet.dpactum.io:5545"));
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:9545"));
         }
         var myDevBank;
-        var DevBankContract = web3.eth.contract([{"constant":false,"inputs":[],"name":"depoist","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_amount","type":"uint256"}],"name":"withdraw","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"current_balance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]);
+        var DevBankContract = web3.eth.contract([{"constant":false,"inputs":[{"name":"_amount","type":"uint256"}],"name":"withdraw","outputs":[{"name":"success","type":"bool"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"currentBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[{"name":"success","type":"bool"}],"payable":true,"stateMutability":"payable","type":"function"}]);
         function deploy() {
-            var DevBank = DevBankContract.new(
-            {
+            DevBankContract.new({                
                 from: web3.eth.accounts[0], 
-                data: '0x6060604052341561000f57600080fd5b5b61018b8061001f6000396000f30060606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063041bacd2146100545780632e1a7d4d1461005e5780635408cfae14610099575b600080fd5b61005c6100c2565b005b341561006957600080fd5b61007f60048080359060200190919050506100d4565b604051808215151515815260200191505060405180910390f35b34156100a457600080fd5b6100ac610159565b6040518082815260200191505060405180910390f35b3460008082825401925050819055505b565b6000813073ffffffffffffffffffffffffffffffffffffffff163110151561014e573373ffffffffffffffffffffffffffffffffffffffff166108fc839081150290604051600060405180830381858888f19350505050151561013657600080fd5b81600080828254039250508190555060019050610153565b600090505b5b919050565b600054815600a165627a7a7230582003bc8fef8c23248daf12e227f4e9cf70162d07ff1fdf6b0b512274b6ecd90c790029', 
+                data: '0x6060604052341561000f57600080fd5b5b61018e8061001f6000396000f30060606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680632e1a7d4d14610054578063ce845d1d14610084578063d0e30db0146100ad575b600080fd5b61006a60048080359060200190919050506100cf565b604051808215151515815260200191505060405180910390f35b341561008f57600080fd5b610097610143565b6040518082815260200191505060405180910390f35b6100b5610149565b604051808215151515815260200191505060405180910390f35b600081600054101515610134573373ffffffffffffffffffffffffffffffffffffffff166108fc839081150290604051600060405180830381858888f19350505050151561011c57600080fd5b8160008082825403925050819055506001905061013e565b6001905061013e565b5b919050565b60005481565b6000346000808282540192505081905550600190505b905600a165627a7a72305820c8cf01540ef54cf2bed1e8492ce3032611dd4b61469ae4fab7fcdbfb126704500029', 
                 gas: '4300000'
             }, function (e, contract){
                 console.log(e, contract);
@@ -35,6 +42,50 @@
                 }
             });
         }
+
+        function currentBank() {
+            return DevBankContract.at("0x8d3af4ff5e2271ff23c0180ecd029ee82ee86914");
+        }
+
+        function balance() {
+            currentBank().currentBalance.call(function(err, result) {
+                console.log(result.toNumber());
+                document.getElementById("balance").innerText = web3.fromWei(result.toNumber());
+            });
+        }
+
+        function deposit() {
+            var amount = web3.toWei("23","ether");
+            currentBank().deposit.sendTransaction({ from: web3.eth.accounts[0], value: amount }, function(err, result) {
+                console.log(err, result);
+            });
+        }
+
+        function withdraw() {
+            var amount = web3.toWei("23", "ether");
+            //var amount = 99999999999999980000;
+            currentBank().withdraw.sendTransaction(amount, { from: web3.eth.accounts[0]}, function(err, result){
+                console.log("Withdraw", err, result);
+            });
+        }
+
+        var filter = web3.eth.filter("latest");
+
+        filter.watch(function(err, result) {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            currentBank().currentBalance.call(function(err, result) {
+                console.log(result.toNumber());
+                document.getElementById("balance").innerText = web3.fromWei(result.toNumber());
+            });
+            var balance = web3.eth.getBalance("0x53f31be941bb9cd1acfa5ab9742ca71efb400560"); //, function(err, result) {
+            console.log(balance.toNumber());
+            document.getElementById("yourbalance").innerText = web3.fromWei(balance.toNumber());
+
+            console.log(result);
+        });
 
         function loadDevbank(address) {
             myDevBank = DevBankContract.at("");
