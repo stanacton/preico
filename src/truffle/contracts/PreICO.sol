@@ -7,6 +7,7 @@ contract PreICO  { //is ERC20 {
 
     uint8 public constant decimals = 18;
     uint256 _totalSupply = 1000000;
+    uint256 _price;
 
     mapping(address => uint256) balances;
 
@@ -15,6 +16,7 @@ contract PreICO  { //is ERC20 {
     function PreICO() {
         owner = msg.sender;
         balances[owner] = _totalSupply;
+        _price = 100000;
     }
 
     function totalSupply() constant returns (uint256 __totalSupply) {
@@ -59,7 +61,11 @@ contract PreICO  { //is ERC20 {
     function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
-    
+
+    function pricePerETH() constant returns (uint256 price) {
+        price = _price;
+    }
+
     event Transfer(address indexed _from, address indexed _to, uint _value);
     event Approval(address indexed _owner, address indexed _spender, uint _value);
 }

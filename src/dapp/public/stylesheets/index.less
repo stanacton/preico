@@ -1,9 +1,10 @@
 @base: #003f58;
 @primary: #12b9c3;
 @default: #02566a;
+@dark-background: #003c4f;
 
 body {
-  color: white;
+  color: @primary;
   background-color: @base;
 }
 
@@ -11,6 +12,39 @@ a {
   color: @primary;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  color: white;
+}
+
 #logo {
   width: 100px;
+}
+
+#price {
+  font-size: 110%;
+  font-weight: bold;
+}
+
+#coin-calc {
+  padding: 20px;
+  background-color: @dark-background;
+  text-align: center;
+
+  .form-group {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+}
+
+#confirm {
+  text-align: center;
+  background-color: #2aabd2;
+  padding: 20px;
+  margin-top: 10px;
+  border-radius: 3px;
+  color: black;
+  a {
+    color: black;
+  }
 }

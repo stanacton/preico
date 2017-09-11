@@ -1,3 +1,22 @@
 <div id="page-wallet">
     <h2>Wallet</h2>
+
+    <div id="coin-calc">
+        <p>Current BBICO price is <span id="price">{{ currentPrice }} ETH</span></p>
+        <div class="form-group">
+            <label for="ethAmount">ETH</label>
+            <input type="number" id="ethAmount" ng-model="ethAmount" class="form-control" ng-change="updatePrice(ethAmount)" />
+            <button class="btn btn-primary" ng-click="buy()">GET {{ tokenAmount }} BBICO</button>
+        </div>
+    </div>
+
+    <div id="confirm" ng-show="displayConfirm">
+        <h3>Confirm Purchase</h3>
+
+        <p>You are about to purchase  <strong>{{ tokenAmount }} BBICO at {{ ethAmount }} ETH</strong></p>
+
+        <p>Are you sure you want to continue?</p>
+        <button class="btn btn-primary">Confirm</button>
+        <a ng-click="cancel()">Cancel</a>
+    </div>
 </div>

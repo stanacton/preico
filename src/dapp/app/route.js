@@ -6,19 +6,19 @@ app.config(function ($routeProvider, $locationProvider) {
         })
         .when("/dashboard", {
             templateUrl: "partials/dashboard.html",
-            controller: "HomeCtrl"
+            controller: "DashboardCtrl"
         })
         .when("/trading", {
             templateUrl: "partials/trading.html",
-            controller: "HomeCtrl"
+            controller: "TradingCtrl"
         })
         .when("/voting", {
             templateUrl: "partials/voting.html",
-            controller: "HomeCtrl"
+            controller: "VotingCtrl"
         })
         .when("/wallet", {
             templateUrl: "partials/wallet.html",
-            controller: "HomeCtrl"
+            controller: "WalletCtrl"
         })
         .otherwise({
             redirectTo: "/home"
