@@ -2,14 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BB PreICO</title>
     <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="stylesheets/index.css" />
 </head>
 <body>
-    <h1>BB</h1>
-    <div class="container" ng-view>
+
+    <div class="page-header">
+        <h1><img src="img/bb-logo.png" id="logo" alt="BB Logo" /> <small>ICO Fund</small></h1>
     </div>
+
+    <div class="row">
+        <div class="col-lg-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation">
+                    <a href="#/dashboard">Dashboard</a>
+                </li>
+                <li role="presentation">
+                    <a href="#/voting">Voting</a>
+                </li>
+                <li role="presentation">
+                    <a href="#/wallet">Wallet</a>
+                </li>
+                <li role="presentation">
+                    <a href="#/trading">Trading</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg-10">
+            <div ng-view>
+            </div>
+        </div>
+    </div>
+
 
 
 
