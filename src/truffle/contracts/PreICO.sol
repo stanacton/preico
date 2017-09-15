@@ -8,7 +8,7 @@ contract PreICO  { //is ERC20 {
     string public constant symbol = "BBTOK";
     uint8 public constant decimals = 18;
   
-    uint256 _totalSupply = 1000000;
+    uint256 _totalSupply = 1000000000000000000000000;
     uint256 _price;
 
     mapping(address => uint256) balances;
@@ -68,17 +68,19 @@ contract PreICO  { //is ERC20 {
         price = _price;
     }
 
-    function buyTokens() returns (bool success) {
-        
-        balances[msg.sender] += 100;
+    uint256 public ethBalance;
 
-        success = true;
+    function buyTokens() payable returns (bool) {
+
+        ethBalance += msg.value;
+
+        uint256 tokens = msg.value / _price;
+
+        balances[msg.sender] += tokens;
+        balances[owner] -= tokens;
 
         Transfer(owner, msg.sender, 100);
-    }
-    uint256 public ethbalance;
-    function fallback() payable {
-        ethbalance += msg.value;
+        return true;
     }
 
     event Transfer(address indexed _from, address indexed _to, uint _value);

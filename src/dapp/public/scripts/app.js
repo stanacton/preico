@@ -138,7 +138,7 @@ app.config(function ($routeProvider, $locationProvider) {
 });
 (function () {
     app.factory("ico", ["web3", "$http", "$q", "$rootScope", function(web3, $http, $q, $rootScope){
-        var ICO, ico;
+        var ICO, ico, decimalPlaces;
         function getICO() {
             var deferred = $q.defer();
 
@@ -166,13 +166,18 @@ app.config(function ($routeProvider, $locationProvider) {
             return deferred.promise;
         }
 
+        function decimals(value) {
+            return web3.fromWei(value, "ether");
+        }
+
         function balanceOf(account, next) {
             getICO().then(function (_ico) {
                 _ico.balanceOf.call(account, function (err, result) {
                     if (err) {
                         return next(err);
                     }
-                    next(null, result.toNumber());
+                    console.log("balance", result.toNumber());
+                    next(null, decimals(result.toNumber()));
                 });
             }, function (err) {
 
@@ -196,7 +201,7 @@ app.config(function ($routeProvider, $locationProvider) {
                         return next(err);
                     }
 
-                    next(null, result.toNumber() / 10000000);
+                    next(null, decimals(result.toNumber()));
                 });
             }, function (err) {
                 console.error(err);
@@ -213,7 +218,8 @@ app.config(function ($routeProvider, $locationProvider) {
         }
 
         function buyTokens(ethAmount, next) {
-            ico.buyTokens.sendTransaction({}, function (err, result) {
+            var wei = web3.toWei(ethAmount, "ether");
+            ico.buyTokens.sendTransaction({ value: wei }, function (err, result) {
                 next(err, result);
             });
         }
@@ -221,6 +227,14 @@ app.config(function ($routeProvider, $locationProvider) {
         var filter = web3.eth.filter("latest");
         filter.watch(function () {
             $rootScope.$broadcast("new-block");
+
+            ico.ethBalance.call(function (err, result) {
+                console.log(err, result.toNumber());
+            });
+
+            balanceOf("0x1bd105ce0ebafbbc6e9bd0b29c3e90779477fcdd", function (err, result) {
+                console.log("owner: ", err, result);
+            });
         });
 
         return {
