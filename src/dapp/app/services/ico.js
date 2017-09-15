@@ -70,6 +70,20 @@
             });
         }
 
+        function totalSupply(next) {
+            getICO().then(function (ico) {
+                ico.totalSupply(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, decimals(result.toNumber()));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
         function currentAccount(next) {
             web3.eth.getAccounts(function (err, accounts) {
                 if (err) {
@@ -82,6 +96,13 @@
         function buyTokens(ethAmount, next) {
             var wei = web3.toWei(ethAmount, "ether");
             ico.buyTokens.sendTransaction({ value: wei }, function (err, result) {
+                next(err, result);
+            });
+        }
+
+        function setPrice(price, next) {
+            var wei = web3.toWei(price, "ether");
+            ico.setPrice.sendTransaction(wei, { gas: 30000 }, function (err, result) {
                 next(err, result);
             });
         }
@@ -99,11 +120,90 @@
             });
         });
 
+        function name(next) {
+            getICO().then(function (ico) {
+                ico.name(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+
+        function symbol(next) {
+            getICO().then(function (ico) {
+                ico.symbol(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function ethBalance(next) {
+            getICO().then(function (ico) {
+                ico.ethBalance(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result.toNumber(), "ether"));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function tokensSold(next) {
+            getICO().then(function (ico) {
+                ico.tokensSold(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result.toNumber(), "ether"));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function tokensRemaining(next) {
+            getICO().then(function (ico) {
+                ico.tokensRemaining(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result.toNumber(), "ether"));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+
         return {
             balance: balance,
             balanceOf: balanceOf,
             pricePerETH: pricePerETH,
-            buyTokens: buyTokens
+            buyTokens: buyTokens,
+            setPrice: setPrice,
+            totalSupply: totalSupply,
+            name: name,
+            symbol: symbol,
+            tokensSold: tokensSold,
+            tokensRemaining: tokensRemaining,
+            ethBalance: ethBalance
         };
     }]);
 })();

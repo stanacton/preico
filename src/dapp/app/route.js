@@ -20,6 +20,10 @@ app.config(function ($routeProvider, $locationProvider) {
             templateUrl: "partials/balance.html",
             controller: "BalanceCtrl"
         })
+        .when("/admin", {
+            templateUrl: "partials/coin-admin.html",
+            controller: "CoinAdminCtrl"
+        })
         .when("/wallet", {
             templateUrl: "partials/wallet.html",
             controller: "WalletCtrl"

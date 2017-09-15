@@ -1,0 +1,45 @@
+<div id="page-coin-admin">
+    <h2>Coin Settings</h2>
+    <div class="form-group">
+        <label for="newPrice">Price in ETH</label>
+        <input class="form-control" type="number" id="newPrice" ng-model="item.newPrice" placeholder="Price in ETH"/>
+    </div>
+    <button class="btn btn-primary" ng-click="setPrice(item.newPrice)">Set Price</button>
+    <div>
+        <div class="key-value">
+            <div class="key">Price per ETH</div>
+            <div class="value">{{ price }}</div>
+        </div>
+
+        <div class="key-value">
+            <div class="key">Total Supply</div>
+            <div class="value">{{ totalSupply }}</div>
+        </div>
+
+        <div class="key-value">
+            <div class="key">Name</div>
+            <div class="value">{{ name }}</div>
+        </div>
+
+        <div class="key-value">
+            <div class="key">Symbol</div>
+            <div class="value">{{ symbol }}</div>
+        </div>
+
+        <div class="key-value">
+            <div class="key">ETHER Balance</div>
+            <div class="value">{{ ethBalance }}</div>
+        </div>
+
+        <div class="key-value">
+            <div class="key">Tokens Sold</div>
+            <div class="value">{{ tokensSold }}</div>
+        </div>
+
+        <div class="key-value">
+            <div class="key">Tokens Remaining</div>
+            <div class="value">{{ tokensRemaining }}</div>
+        </div>
+
+    </div>
+</div>

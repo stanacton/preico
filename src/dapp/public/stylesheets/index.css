@@ -41,3 +41,23 @@ h6 {
 #confirm a {
   color: black;
 }
+#page-coin-admin .key-value {
+  padding: 10px;
+  width: 200px;
+  height: 75px;
+  border-radius: 5px;
+  border: 1px solid #12b9c3;
+  text-align: center;
+  margin: 5px;
+  float: left;
+  display: block;
+}
+#page-coin-admin .key {
+  font-weight: bold;
+}
+#page-coin-admin .value {
+  padding-left: 10px;
+  font-size: 200%;
+  font-weight: bold;
+  color: white;
+}

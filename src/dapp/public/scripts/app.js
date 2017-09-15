@@ -21,6 +21,103 @@ app.controller("BalanceCtrl", ['$scope', 'web3', 'ico', function ($scope, web3, 
     };
 }]);
 
+app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function ($scope, web3, ico, $rootScope) {
+
+
+    function updatePrice() {
+        ico.pricePerETH(function (err, result) {
+            if (err) {
+                return console.error(err);
+            }
+
+            $scope.price = result;
+            $scope.$apply();
+        });
+    }
+
+    function getTotalSupply() {
+        ico.totalSupply(function (err, totalSupply) {
+            $scope.totalSupply = totalSupply;
+            $scope.$apply();
+        });
+    }
+
+    function symbol() {
+        ico.symbol(function (err, data) {
+            $scope.symbol = data;
+            $scope.$apply();
+        });
+    }
+
+    function name() {
+        ico.name(function (err, name) {
+            $scope.name = name;
+            $scope.$apply();
+        });
+    }
+
+    function ethBalance() {
+        ico.ethBalance(function (err, data) {
+            $scope.ethBalance = data;
+            $scope.$apply();
+        });
+    }
+
+    function tokensSold() {
+        ico.tokensSold(function (err, data) {
+            $scope.tokensSold = data;
+            $scope.$apply();
+        });
+    }
+
+    function tokensRemaining() {
+        ico.tokensRemaining(function (err, data) {
+            $scope.tokensRemaining = data;
+            $scope.$apply();
+        });
+    }
+
+    $scope.updatePrice = function (newPrice) {
+        ico.setPrice(newPrice, function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("Your transaction has been submitted");
+        });
+    };
+
+    $rootScope.$on("new-block", function (event) {
+        updateDetails();
+    });
+
+    function updateDetails() {
+        updatePrice();
+        getTotalSupply();
+        name();
+        symbol();
+        ethBalance();
+        tokensSold();
+        tokensRemaining();
+    }
+
+    updateDetails();
+
+    $scope.setPrice = function (price) {
+        ico.setPrice(price, function (err, response) {
+            if (err) {
+                alert("There was an error setting the price.");
+                console.error(err);
+                return;
+            }
+
+            alert("Transaction Submitted");
+        });
+    };
+
+}]);
+
 app.controller("DashboardCtrl", ["$scope", "web3", function ($scope, web3) {
 
 }]);
@@ -126,6 +223,10 @@ app.config(function ($routeProvider, $locationProvider) {
             templateUrl: "partials/balance.html",
             controller: "BalanceCtrl"
         })
+        .when("/admin", {
+            templateUrl: "partials/coin-admin.html",
+            controller: "CoinAdminCtrl"
+        })
         .when("/wallet", {
             templateUrl: "partials/wallet.html",
             controller: "WalletCtrl"
@@ -208,6 +309,20 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function totalSupply(next) {
+            getICO().then(function (ico) {
+                ico.totalSupply(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, decimals(result.toNumber()));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
         function currentAccount(next) {
             web3.eth.getAccounts(function (err, accounts) {
                 if (err) {
@@ -220,6 +335,13 @@ app.config(function ($routeProvider, $locationProvider) {
         function buyTokens(ethAmount, next) {
             var wei = web3.toWei(ethAmount, "ether");
             ico.buyTokens.sendTransaction({ value: wei }, function (err, result) {
+                next(err, result);
+            });
+        }
+
+        function setPrice(price, next) {
+            var wei = web3.toWei(price, "ether");
+            ico.setPrice.sendTransaction(wei, { gas: 30000 }, function (err, result) {
                 next(err, result);
             });
         }
@@ -237,11 +359,90 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         });
 
+        function name(next) {
+            getICO().then(function (ico) {
+                ico.name(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+
+        function symbol(next) {
+            getICO().then(function (ico) {
+                ico.symbol(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function ethBalance(next) {
+            getICO().then(function (ico) {
+                ico.ethBalance(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result.toNumber(), "ether"));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function tokensSold(next) {
+            getICO().then(function (ico) {
+                ico.tokensSold(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result.toNumber(), "ether"));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function tokensRemaining(next) {
+            getICO().then(function (ico) {
+                ico.tokensRemaining(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result.toNumber(), "ether"));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+
         return {
             balance: balance,
             balanceOf: balanceOf,
             pricePerETH: pricePerETH,
-            buyTokens: buyTokens
+            buyTokens: buyTokens,
+            setPrice: setPrice,
+            totalSupply: totalSupply,
+            name: name,
+            symbol: symbol,
+            tokensSold: tokensSold,
+            tokensRemaining: tokensRemaining,
+            ethBalance: ethBalance
         };
     }]);
 })();

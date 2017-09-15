@@ -78,6 +78,15 @@ contract PreICO  { //is ERC20 {
         _price = _newPrice;
         return true;
     }
+
+    function tokensSold() constant returns(uint256) {
+        return totalSupply() - balances[owner];
+    }
+
+    function tokensRemaining() constant returns(uint256) {
+        return balances[owner];
+    }
+
     function power() public constant returns (uint256) {
         return 10 ** 18;
     }
