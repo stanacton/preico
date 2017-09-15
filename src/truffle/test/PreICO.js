@@ -173,7 +173,6 @@ contract("PreICO", function(accounts) {
             }).then(function(events) {
                 var to_diff = fromWei(to_balance_after) - fromWei(to_balance_before);
                 var from_diff = fromWei(from_balance_after) - fromWei(from_balance_before);
-                console.log("from acc ", from_balance_after, from_balance_before);
 
                // assert.equal(result, false, "the return value should have been false");
                 assert.equal(from_diff, 0-fromWei(amountToTransfer), "the from account should be less");
@@ -558,8 +557,12 @@ contract("PreICO", function(accounts) {
                 assert.equal(toWei(to_diff), amountToTransfer, "2) the to account balance should have changed by the amout to transfer only");
             });
         });
-    /* 
-        it("BUY TOKENS should fail if the sender is not authorized", function() {
+   
+     
+    });
+    
+    describe("buyTokens", function() {
+        it("should calculate and allocate the correct tokens", function() {
             var ownerBalance, ico;
             var customerAccount = accounts[6];
             var owner = accounts[0];
@@ -567,44 +570,99 @@ contract("PreICO", function(accounts) {
             var initialOwnerBalance, finalOwnerBalance;
             var initialCusBalance, finalCusBalance;
             var watcher;
+            var eth = 2;
+            var payment = toWei(eth);
+            var price = toWei(0.5);
+            var ethBalance = 0;
+            var expectedNet = 4;
 
             return PreICO.deployed().then(function(instance) {
                 ico = instance;
                 watcher = ico.Transfer();
                 
-                return ico.balanceOf.call(owner);
+                return ico.setPrice(price);
             }).then(function(_balance) {
-                initialOwnerBalance = _balance.valueOf();
-                return ico.balanceOf.call(customerAccount);
-            }).then(function(_balance) {
-                initialCusBalance = _balance.valueOf();
-                var wei = web3.toWei(33, "ether");
-                return ico.buyTokens({ value: wei,  from: customerAccount });
-            }).then(function() {
-                return ico.balanceOf.call(owner);
-            }).then(function(_balance) {
-                finalOwnerBalance = _balance.valueOf();
-                return ico.balanceOf.call(customerAccount);
-            }).then(function(_balance) {
-                finalCusBalance = _balance.valueOf();
                 
+                return ico.balanceOf.call(owner);
+            }).then(function(_balance) {
+                initialOwnerBalance = fromWei(_balance).valueOf();
+                return ico.balanceOf.call(customerAccount);
+            }).then(function(_balance) {
+                initialCusBalance = fromWei(_balance).valueOf();
+                return ico.buyTokens({ value: payment,  from: customerAccount });
+            }).then(function() {
+                return ico.ethBalance.call();
+            }).then(function(_ethBalance) {
+                ethBalance = _ethBalance;
+                return ico.balanceOf.call(owner);
+            }).then(function(_balance) {
+                finalOwnerBalance = fromWei(_balance).valueOf();
+                return ico.balanceOf.call(customerAccount);
+            }).then(function(_balance) {
+                finalCusBalance = fromWei(_balance).valueOf();
                 var cusDiff = finalCusBalance - initialCusBalance;
                 var ownerDiff = finalOwnerBalance - initialOwnerBalance;
     
-               // assert.equal(result, false, "the return value should have been false");
-                assert.equal(cusDiff, 0, "the from account balance should not have changed");
-                assert.equal(ownerDiff, 0, "the to account balance should not have changed");
-                assert.equal(events.length, 1, "event should have been raised");
+                assert.equal((cusDiff), expectedNet, "the customers account should have been credited");
+                assert.equal(ownerDiff, 0-expectedNet, "the owner account should be less");
+                assert.equal(ethBalance, toWei(eth), "ether balance is incorrect");
             });
         });
-     */
+        it("should calculate and allocate the correct tokens with different amounts", function() {
+            var ownerBalance, ico;
+            var customerAccount = accounts[6];
+            var owner = accounts[0];
+            
+            var initialOwnerBalance, finalOwnerBalance;
+            var initialCusBalance, finalCusBalance;
+            var watcher;
+            var eth = 2;
+            var payment = toWei(eth);
+            var price = toWei(4);
+            var ethBalance = 0;
+            var expectedNet = 0.5;
+
+            return PreICO.deployed().then(function(instance) {
+                ico = instance;
+                watcher = ico.Transfer();
+                
+                return ico.setPrice(price);
+            }).then(function(_balance) {
+                
+                return ico.balanceOf.call(owner);
+            }).then(function(_balance) {
+                initialOwnerBalance = fromWei(_balance).valueOf();
+                return ico.balanceOf.call(customerAccount);
+            }).then(function(_balance) {
+                initialCusBalance = fromWei(_balance).valueOf();
+                return ico.buyTokens({ value: payment,  from: customerAccount });
+            }).then(function() {
+                return ico.ethBalance.call();
+            }).then(function(_ethBalance) {
+                ethBalance = _ethBalance;
+                return ico.balanceOf.call(owner);
+            }).then(function(_balance) {
+                finalOwnerBalance = fromWei(_balance).valueOf();
+                return ico.balanceOf.call(customerAccount);
+            }).then(function(_balance) {
+                finalCusBalance = (_balance).valueOf();
+                var cusDiff = finalCusBalance - initialCusBalance;
+                var ownerDiff = finalOwnerBalance - initialOwnerBalance;
+    console.log("final balance", finalCusBalance);
+                assert.equal((cusDiff), expectedNet, "the customers account should have been credited");
+                assert.equal(ownerDiff, 0-expectedNet, "the owner account should be less");
+                assert.equal(ethBalance, toWei(eth), "ether balance is incorrect");
+            });
+        }); 5000000000000000000
     });
-    
 });
 
 function toWei(value) {
     return web3.toWei(value, "ether");
 }
+
+
+
 
 function fromWei(value) {
     return web3.fromWei(value, "ether");

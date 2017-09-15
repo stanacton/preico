@@ -2,7 +2,11 @@ pragma solidity ^0.4.4;
 
 //import "./ERC20.sol";
 
+import "./SafeMath.sol";
+
 contract PreICO  { //is ERC20 {
+    //using SafeMath for uint;
+
     address public owner;
     string public constant name = "BB Token";
     string public constant symbol = "BBTOK";
@@ -18,7 +22,7 @@ contract PreICO  { //is ERC20 {
     function PreICO() {
         owner = msg.sender;
         balances[owner] = _totalSupply;
-        _price = 100000;
+        _price = 2000000000000000000;
     }
 
     function totalSupply() constant returns (uint256 __totalSupply) {
@@ -70,17 +74,31 @@ contract PreICO  { //is ERC20 {
 
     uint256 public ethBalance;
 
-    function buyTokens() payable returns (bool) {
-
-        ethBalance += msg.value;
-
-        uint256 tokens = msg.value / _price;
-
-        balances[msg.sender] += tokens;
-        balances[owner] -= tokens;
-
-        Transfer(owner, msg.sender, 100);
+    function setPrice(uint256 _newPrice) returns(bool) {
+        _price = _newPrice;
         return true;
+    }
+    function power() public constant returns (uint256) {
+        return 10 ** 18;
+    }
+    function buyTokens() payable returns (bool) {
+        ethBalance += msg.value;
+        uint256 tokens = this.calculatTokens(ethBalance);
+        if (balances[owner] >= tokens && tokens > 0 && balances[msg.sender] + tokens > balances[msg.sender]) { 
+            balances[msg.sender] += tokens;
+            balances[owner] -= tokens;
+
+            Transfer(owner, msg.sender, tokens);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function calculatTokens(uint256 eth) constant returns (uint256) {
+        uint256 ten = 10;
+        uint256 tens = (ten ** decimals);
+        return (eth / _price) * tens;
     }
 
     event Transfer(address indexed _from, address indexed _to, uint _value);
