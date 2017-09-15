@@ -1,14 +1,17 @@
 var ERC20 = artifacts.require("./ERC20.sol");
 var PreICO = artifacts.require("./PreICO.sol");
 var SafeMath = artifacts.require("./SafeMath.sol");
+var SafeMathLib = artifacts.require("./SafeMathLib.sol");
 
 var fs = require("fs");
 
 module.exports = function(deployer) {
   deployer.deploy(ERC20);
   deployer.deploy(SafeMath);
+  deployer.deploy(SafeMathLib);
   deployer.link(ERC20, PreICO);
   deployer.link(SafeMath, PreICO);
+  deployer.link(SafeMathLib, PreICO);
   
   deployer.deploy(PreICO).then(function(err, result) {
     var addressData = {};

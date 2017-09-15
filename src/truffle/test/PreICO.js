@@ -645,15 +645,17 @@ contract("PreICO", function(accounts) {
                 finalOwnerBalance = fromWei(_balance).valueOf();
                 return ico.balanceOf.call(customerAccount);
             }).then(function(_balance) {
-                finalCusBalance = (_balance).valueOf();
+                finalCusBalance = fromWei(_balance).valueOf();
                 var cusDiff = finalCusBalance - initialCusBalance;
                 var ownerDiff = finalOwnerBalance - initialOwnerBalance;
-    console.log("final balance", finalCusBalance);
-                assert.equal((cusDiff), expectedNet, "the customers account should have been credited");
+
+                console.log("before", initialCusBalance, "after", finalCusBalance);
+
+                assert.equal(fromWei(cusDiff), expectedNet, "the customers account should have been credited");
                 assert.equal(ownerDiff, 0-expectedNet, "the owner account should be less");
                 assert.equal(ethBalance, toWei(eth), "ether balance is incorrect");
             });
-        }); 5000000000000000000
+        }); 
     });
 });
 

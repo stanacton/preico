@@ -3,9 +3,10 @@ pragma solidity ^0.4.4;
 //import "./ERC20.sol";
 
 import "./SafeMath.sol";
+import "./SafeMathLib.sol";
 
-contract PreICO  { //is ERC20 {
-    //using SafeMath for uint;
+contract PreICO is SafeMath { //is ERC20 {
+    using SafeMathLib for uint;
 
     address public owner;
     string public constant name = "BB Token";
@@ -104,10 +105,17 @@ contract PreICO  { //is ERC20 {
         }
     }
 
+    function calculatePrice(uint256 eth) returns (uint256) {
+        uint256 ten = 10;
+        uint256 tens = (ten ** decimals);
+        return eth.times(tens) / _price;
+    }
+
+
     function calculatTokens(uint256 eth) constant returns (uint256) {
         uint256 ten = 10;
         uint256 tens = (ten ** decimals);
-        return (eth / _price) * tens;
+        return safeDiv(eth, _price) * tens;
     }
 
     event Transfer(address indexed _from, address indexed _to, uint _value);
