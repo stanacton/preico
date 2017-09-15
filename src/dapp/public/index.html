@@ -10,8 +10,15 @@
 </head>
 <body>
     <div class="container">
-        <div class="page-header row">
+
+        <div class="page-header">
             <h1><img src="img/bb-logo.png" id="logo" alt="BB Logo" /> <small>ICO Fund</small></h1>
+        </div>
+
+        <div ng-controller="StateCtrl as state">
+            <div class="alert alert-info" ng-show="existingProvider !== true">
+                You are not using a Eth Client.
+            </div>
         </div>
 
         <div class="row">

@@ -1,6 +1,6 @@
-<div id="page-wallet">
+<div id="page-wallet" ng-cloak>
     <h2>Wallet</h2>
-
+    <h3>You Currently have {{ balance }} BBICO</h3>
     <div id="coin-calc">
         <p>Current BBICO price is <span id="price">{{ currentPrice }} ETH</span></p>
         <div class="form-group">
@@ -16,7 +16,7 @@
         <p>You are about to purchase  <strong>{{ tokenAmount }} BBICO at {{ ethAmount }} ETH</strong></p>
 
         <p>Are you sure you want to continue?</p>
-        <button class="btn btn-primary">Confirm</button>
+        <button class="btn btn-primary" ng-click="confirm()">Confirm</button>
         <a ng-click="cancel()">Cancel</a>
     </div>
 </div>

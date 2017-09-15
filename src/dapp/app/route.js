@@ -16,6 +16,10 @@ app.config(function ($routeProvider, $locationProvider) {
             templateUrl: "partials/voting.html",
             controller: "VotingCtrl"
         })
+        .when("/balance", {
+            templateUrl: "partials/balance.html",
+            controller: "BalanceCtrl"
+        })
         .when("/wallet", {
             templateUrl: "partials/wallet.html",
             controller: "WalletCtrl"

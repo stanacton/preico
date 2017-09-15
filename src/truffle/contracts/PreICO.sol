@@ -4,8 +4,10 @@ pragma solidity ^0.4.4;
 
 contract PreICO  { //is ERC20 {
     address public owner;
-
+    string public constant name = "BB Token";
+    string public constant symbol = "BBTOK";
     uint8 public constant decimals = 18;
+  
     uint256 _totalSupply = 1000000;
     uint256 _price;
 
@@ -64,6 +66,19 @@ contract PreICO  { //is ERC20 {
 
     function pricePerETH() constant returns (uint256 price) {
         price = _price;
+    }
+
+    function buyTokens() returns (bool success) {
+        
+        balances[msg.sender] += 100;
+
+        success = true;
+
+        Transfer(owner, msg.sender, 100);
+    }
+    uint256 public ethbalance;
+    function fallback() payable {
+        ethbalance += msg.value;
     }
 
     event Transfer(address indexed _from, address indexed _to, uint _value);
