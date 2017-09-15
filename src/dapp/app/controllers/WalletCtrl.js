@@ -1,4 +1,4 @@
-app.controller("WalletCtrl", ["$scope", "web3","ico", function ($scope, web3, ico) {
+app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($scope, web3, ico, $rootScope) {
 
     function updateBalance() {
         ico.pricePerETH(function (err, price) {
@@ -17,11 +17,11 @@ app.controller("WalletCtrl", ["$scope", "web3","ico", function ($scope, web3, ic
             } else {
                 $scope.balance = balance;
             }
-            $scope.$apply();
+            $rootScope.$apply();
         });
     }
 
-    $scope.$on("new-block", function () {
+    $rootScope.$on("new-block", function () {
         updateBalance();
     });
 

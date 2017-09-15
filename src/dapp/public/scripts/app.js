@@ -49,7 +49,7 @@ app.controller("TradingCtrl", ["$scope", "web3", function ($scope, web3) {
 app.controller("VotingCtrl", ["$scope", "web3", function ($scope, web3) {
 
 }]);
-app.controller("WalletCtrl", ["$scope", "web3","ico", function ($scope, web3, ico) {
+app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($scope, web3, ico, $rootScope) {
 
     function updateBalance() {
         ico.pricePerETH(function (err, price) {
@@ -68,11 +68,11 @@ app.controller("WalletCtrl", ["$scope", "web3","ico", function ($scope, web3, ic
             } else {
                 $scope.balance = balance;
             }
-            $scope.$apply();
+            $rootScope.$apply();
         });
     }
 
-    $scope.$on("new-block", function () {
+    $rootScope.$on("new-block", function () {
         updateBalance();
     });
 
@@ -147,14 +147,15 @@ app.config(function ($routeProvider, $locationProvider) {
             } else {
                 $http.get("PreICO.json")
                     .then(function (result) {
-                        console.log(result.data.abi);
                         ICO = web3.eth.contract(result.data.abi);
 
                         return $http.get("address.json").then(function (result) {
-                            console.log(result.data);
                             var address = result.data;
                             ico = ICO.at(address.PreICO.address);
                             deferred.resolve(ico);
+                        }, function (err) {
+                            alert("Couldn't load the coin address");
+                            deferred.reject(err);
                         });
                     }, function (err) {
                         alert("THERE WAS A FATAL ERROR!!");
@@ -166,16 +167,16 @@ app.config(function ($routeProvider, $locationProvider) {
         }
 
         function balanceOf(account, next) {
-            getICO().then(function (ico) {
-                ico.balanceOf(account, function (err, result) {
+            getICO().then(function (_ico) {
+                _ico.balanceOf.call(account, function (err, result) {
                     if (err) {
                         return next(err);
                     }
-
-                    console.log("balanceof", err, result);
-
                     next(null, result.toNumber());
                 });
+            }, function (err) {
+
+                console.error("ASDFSADF", err);
             });
         }
 
@@ -197,6 +198,8 @@ app.config(function ($routeProvider, $locationProvider) {
 
                     next(null, result.toNumber() / 10000000);
                 });
+            }, function (err) {
+                console.error(err);
             });
         }
 
@@ -210,10 +213,7 @@ app.config(function ($routeProvider, $locationProvider) {
         }
 
         function buyTokens(ethAmount, next) {
-            var amount = web3.toWei(ethAmount, 'ether');
-            console.log(ico.buyTokens.getData({ value: amount, gas: 28000 }));
-            ico.buyTokens.sendTransaction(function (err, result) {
-                console.log("REsult was", err, result);
+            ico.buyTokens.sendTransaction({}, function (err, result) {
                 next(err, result);
             });
         }
