@@ -440,7 +440,7 @@ contract("PreICO", function(accounts) {
             });
         });
     
-    /*    it("should fail if the amount is less than zero.", function() {
+       it("should fail if the amount is less than zero.", function() {
             var ownerBalance, ico;
             var account_from = accounts[0];
             var account_to = accounts[1];
@@ -487,7 +487,7 @@ contract("PreICO", function(accounts) {
             var from_balance_before, from_balance_after;
             var result = undefined;
             var actor = accounts[3];
-            var amountToTransfer = 1000000;
+            var amountToTransfer = toWei(1000000);
     
             return PreICO.deployed().then(function(instance) {
                 ico = instance;
@@ -517,7 +517,7 @@ contract("PreICO", function(accounts) {
                 assert.equal(to_diff, 0, "the to account balance should not have changed");
             });
         });
-    
+   
         it("should fail if the spender has exceeded their limit", function() {
             var ownerBalance, ico;
             var account_from = accounts[0];
@@ -526,16 +526,16 @@ contract("PreICO", function(accounts) {
             var from_balance_before, from_balance_after;
             var result = undefined;
             var actor = accounts[3];
-            var amountToTransfer = 10;
+            var amountToTransfer = toWei(10);
     
             return PreICO.deployed().then(function(instance) {
                 ico = instance;
                 return ico.balanceOf.call(account_from);
             }).then(function(_fromBalance1) {
-                from_balance_before = _fromBalance1.valueOf();
+                from_balance_before = fromWei(_fromBalance1).valueOf();
                 return ico.balanceOf.call(account_to);
             }).then(function(_toBalance) {
-                to_balance_before = _toBalance.valueOf();
+                to_balance_before = fromWei(_toBalance).valueOf();
                 return ico.approve(actor, amountToTransfer, { from: account_from });
             }).then(function() {
                 return ico.transferFrom(account_from, account_to, amountToTransfer, { from: actor});
@@ -546,19 +546,19 @@ contract("PreICO", function(accounts) {
                 result = _result;
                 return ico.balanceOf.call(account_from);
             }).then(function(_fromBalance) {
-                from_balance_after = _fromBalance.valueOf();
+                from_balance_after = fromWei(_fromBalance).valueOf();
                 return ico.balanceOf.call(account_to);
             }).then(function(_toBalance) {
-                to_balance_after = _toBalance.valueOf();
+                to_balance_after = fromWei(_toBalance).valueOf();
                 
                 var to_diff = to_balance_after - to_balance_before;
                 var from_diff = from_balance_after - from_balance_before;
     
-                assert.equal(from_diff, 0 - amountToTransfer, "the from account balance should have changed by the amout to transfer only");
-                assert.equal(to_diff, amountToTransfer, "the to account balance should have changed by the amout to transfer only");
+                assert.equal(from_diff, 0 - fromWei(amountToTransfer), "1) the from account balance should have changed by the amout to transfer only");
+                assert.equal(toWei(to_diff), amountToTransfer, "2) the to account balance should have changed by the amout to transfer only");
             });
         });
-    
+    /* 
         it("BUY TOKENS should fail if the sender is not authorized", function() {
             var ownerBalance, ico;
             var customerAccount = accounts[6];
@@ -597,7 +597,7 @@ contract("PreICO", function(accounts) {
                 assert.equal(events.length, 1, "event should have been raised");
             });
         });
-    */
+     */
     });
     
 });
