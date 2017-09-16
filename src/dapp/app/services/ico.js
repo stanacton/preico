@@ -1,17 +1,17 @@
 (function () {
     app.factory("ico", ["web3", "$http", "$q", "$rootScope", function(web3, $http, $q, $rootScope){
-        var ICO, ico, decimalPlaces;
+        var ICO, ico;
         function getICO() {
-            var deferred = $q.defer();
 
+            var deferred = $q.defer();
             if (ico) {
                 deferred.resolve(ico);
             } else {
-                $http.get("PreICO.json")
+                $http.get("/config/preico/abi")
                     .then(function (result) {
-                        ICO = web3.eth.contract(result.data.abi);
+                        ICO = web3.eth.contract(result.data);
 
-                        return $http.get("address.json").then(function (result) {
+                        return $http.get("/config/address").then(function (result) {
                             var address = result.data;
                             ico = ICO.at(address.PreICO.address);
                             deferred.resolve(ico);
@@ -108,11 +108,15 @@
         }
 
         var filter = web3.eth.filter("latest");
-        filter.watch(function () {
+        filter.watch(function (data) {
+            console.log(data);
             $rootScope.$broadcast("new-block");
-
-            ico.ethBalance.call(function (err, result) {
-                console.log(err, result.toNumber());
+            getICO().then(function (_ico) {
+                ico.ethBalance.call(function (err, result) {
+                    console.log(err, result.toNumber());
+                });
+            }, function (err) {
+                console.error(err);
             });
 
             balanceOf("0x1bd105ce0ebafbbc6e9bd0b29c3e90779477fcdd", function (err, result) {

@@ -6,8 +6,8 @@
     "101010": {
       "events": {},
       "links": {},
-      "address": "0x919a8503f4e744dc628e8ff673c1d84668d50ab9",
-      "updated_at": 1505577620902
+      "address": "0xf43a50af9d560d5727c48cac4e68d39bde15f38f",
+      "updated_at": 1505588366527
     },
     "1505430405210": {
       "events": {},
@@ -53,5 +53,5 @@
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1505577620902
+  "updated_at": 1505588366527
 }

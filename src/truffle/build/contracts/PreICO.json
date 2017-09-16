@@ -381,11 +381,11 @@
         }
       },
       "links": {
-        "SafeMath": "0xcdbeec8f884cbd63f9008671c779f8b06354c6b8",
-        "SafeMathLib": "0x220994b63508dfd57affe6a78e46ea0593efc2b5"
+        "SafeMath": "0xa076971bf74e95780fbc4b543e32c08d4e7dfc70",
+        "SafeMathLib": "0x1cf79c05130e778b517d886742f14989aa566856"
       },
-      "address": "0x66aaaf4607c509976da27a50272a90c2e14b9813",
-      "updated_at": 1505577620903
+      "address": "0xa319a45177a1763be3fae56e0625f51a3ffd25c7",
+      "updated_at": 1505588366528
     },
     "1505430405210": {
       "events": {
@@ -749,5 +749,5 @@
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1505577620903
+  "updated_at": 1505588366528
 }

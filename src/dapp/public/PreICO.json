@@ -380,9 +380,12 @@
           "type": "event"
         }
       },
-      "links": {},
-      "address": "0x0a18ce0856088d691c14aa09912976921a78140f",
-      "updated_at": 1505444210496
+      "links": {
+        "SafeMath": "0xcdbeec8f884cbd63f9008671c779f8b06354c6b8",
+        "SafeMathLib": "0x220994b63508dfd57affe6a78e46ea0593efc2b5"
+      },
+      "address": "0x66aaaf4607c509976da27a50272a90c2e14b9813",
+      "updated_at": 1505577620903
     },
     "1505430405210": {
       "events": {
@@ -746,5 +749,5 @@
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1505576886697
+  "updated_at": 1505577620903
 }

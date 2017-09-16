@@ -122,13 +122,7 @@ app.controller("DashboardCtrl", ["$scope", "web3", function ($scope, web3) {
 
 }]);
 app.controller("HomeCtrl", ["$scope", "web3", function ($scope, web3) {
-    web3.eth.getBalance(web3.eth.coinbase, function (err, response) {
-        if (err) {
-            return console.error(err);
-        }
-        $scope.balance = response.toNumber();
-        $scope.$apply();
-    });
+
 }]);
 function StateCtrl($scope, web3, ico) {
     var self = this;
@@ -239,18 +233,18 @@ app.config(function ($routeProvider, $locationProvider) {
 });
 (function () {
     app.factory("ico", ["web3", "$http", "$q", "$rootScope", function(web3, $http, $q, $rootScope){
-        var ICO, ico, decimalPlaces;
+        var ICO, ico;
         function getICO() {
-            var deferred = $q.defer();
 
+            var deferred = $q.defer();
             if (ico) {
                 deferred.resolve(ico);
             } else {
-                $http.get("PreICO.json")
+                $http.get("/config/preico/abi")
                     .then(function (result) {
-                        ICO = web3.eth.contract(result.data.abi);
+                        ICO = web3.eth.contract(result.data);
 
-                        return $http.get("address.json").then(function (result) {
+                        return $http.get("/config/address").then(function (result) {
                             var address = result.data;
                             ico = ICO.at(address.PreICO.address);
                             deferred.resolve(ico);
@@ -347,11 +341,15 @@ app.config(function ($routeProvider, $locationProvider) {
         }
 
         var filter = web3.eth.filter("latest");
-        filter.watch(function () {
+        filter.watch(function (data) {
+            console.log(data);
             $rootScope.$broadcast("new-block");
-
-            ico.ethBalance.call(function (err, result) {
-                console.log(err, result.toNumber());
+            getICO().then(function (_ico) {
+                ico.ethBalance.call(function (err, result) {
+                    console.log(err, result.toNumber());
+                });
+            }, function (err) {
+                console.error(err);
             });
 
             balanceOf("0x1bd105ce0ebafbbc6e9bd0b29c3e90779477fcdd", function (err, result) {
