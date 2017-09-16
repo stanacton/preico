@@ -26,6 +26,10 @@ contract PreICO is SafeMath { //is ERC20 {
         _price = 2000000000000000000;
     }
 
+    function() payable {
+        revert();
+    }
+
     function totalSupply() constant returns (uint256 __totalSupply) {
         __totalSupply = _totalSupply;
     }
@@ -88,12 +92,9 @@ contract PreICO is SafeMath { //is ERC20 {
         return balances[owner];
     }
 
-    function power() public constant returns (uint256) {
-        return 10 ** 18;
-    }
     function buyTokens() payable returns (bool) {
         ethBalance += msg.value;
-        uint256 tokens = this.calculatTokens(ethBalance);
+        uint tokens = this.calculatTokens(msg.value);
         if (balances[owner] >= tokens && tokens > 0 && balances[msg.sender] + tokens > balances[msg.sender]) { 
             balances[msg.sender] += tokens;
             balances[owner] -= tokens;
@@ -105,17 +106,10 @@ contract PreICO is SafeMath { //is ERC20 {
         }
     }
 
-    function calculatePrice(uint256 eth) returns (uint256) {
-        uint256 ten = 10;
-        uint256 tens = (ten ** decimals);
-        return eth.times(tens) / _price;
-    }
-
-
     function calculatTokens(uint256 eth) constant returns (uint256) {
         uint256 ten = 10;
-        uint256 tens = (ten ** decimals);
-        return safeDiv(eth, _price) * tens;
+        uint256 tens = ten ** (decimals);
+        return eth.times(tens) / _price;
     }
 
     event Transfer(address indexed _from, address indexed _to, uint _value);

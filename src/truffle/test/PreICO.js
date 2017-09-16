@@ -17,7 +17,7 @@ contract("PreICO", function(accounts) {
         }); 
     });
 
-   describe("totalSupply", function() {
+    describe("totalSupply", function() {
         it("should show the correct total supply", function() {
             return PreICO.deployed().then(function(instance) {
                 return instance.totalSupply.call();
@@ -560,7 +560,7 @@ contract("PreICO", function(accounts) {
    
      
     });
-    
+
     describe("buyTokens", function() {
         it("should calculate and allocate the correct tokens", function() {
             var ownerBalance, ico;
@@ -585,10 +585,10 @@ contract("PreICO", function(accounts) {
                 
                 return ico.balanceOf.call(owner);
             }).then(function(_balance) {
-                initialOwnerBalance = fromWei(_balance).valueOf();
+                initialOwnerBalance = _balance;
                 return ico.balanceOf.call(customerAccount);
             }).then(function(_balance) {
-                initialCusBalance = fromWei(_balance).valueOf();
+                initialCusBalance = _balance;
                 return ico.buyTokens({ value: payment,  from: customerAccount });
             }).then(function() {
                 return ico.ethBalance.call();
@@ -596,18 +596,19 @@ contract("PreICO", function(accounts) {
                 ethBalance = _ethBalance;
                 return ico.balanceOf.call(owner);
             }).then(function(_balance) {
-                finalOwnerBalance = fromWei(_balance).valueOf();
+                finalOwnerBalance = _balance;
                 return ico.balanceOf.call(customerAccount);
             }).then(function(_balance) {
-                finalCusBalance = fromWei(_balance).valueOf();
-                var cusDiff = finalCusBalance - initialCusBalance;
-                var ownerDiff = finalOwnerBalance - initialOwnerBalance;
+                finalCusBalance = _balance;
+                var cusDiff = finalCusBalance.minus(initialCusBalance).valueOf();
+                var ownerDiff = finalOwnerBalance.minus(initialOwnerBalance).valueOf();
     
-                assert.equal((cusDiff), expectedNet, "the customers account should have been credited");
-                assert.equal(ownerDiff, 0-expectedNet, "the owner account should be less");
-                assert.equal(ethBalance, toWei(eth), "ether balance is incorrect");
+                assert.equal(fromWei(cusDiff), expectedNet, "the customers account should have been credited");
+                assert.equal(fromWei(ownerDiff), 0-expectedNet, "the owner account should be less");
+                assert.equal(fromWei(ethBalance), eth, "ether balance is incorrect");
             });
         });
+        
         it("should calculate and allocate the correct tokens with different amounts", function() {
             var ownerBalance, ico;
             var customerAccount = accounts[6];
@@ -621,50 +622,144 @@ contract("PreICO", function(accounts) {
             var price = toWei(4);
             var ethBalance = 0;
             var expectedNet = 0.5;
+            var ethBalanceBefore, ethBalanceAfter;
 
             return PreICO.deployed().then(function(instance) {
                 ico = instance;
                 watcher = ico.Transfer();
                 
                 return ico.setPrice(price);
-            }).then(function(_balance) {
+            }).then(function() {
+                return ico.ethBalance.call();
+            }).then(function(_ethBalance) {
+                ethBalanceBefore = _ethBalance;
                 
                 return ico.balanceOf.call(owner);
             }).then(function(_balance) {
-                initialOwnerBalance = fromWei(_balance).valueOf();
+                initialOwnerBalance = _balance;
                 return ico.balanceOf.call(customerAccount);
             }).then(function(_balance) {
-                initialCusBalance = fromWei(_balance).valueOf();
+                initialCusBalance = _balance;
                 return ico.buyTokens({ value: payment,  from: customerAccount });
             }).then(function() {
                 return ico.ethBalance.call();
             }).then(function(_ethBalance) {
-                ethBalance = _ethBalance;
+                ethBalanceAfter = _ethBalance;
                 return ico.balanceOf.call(owner);
             }).then(function(_balance) {
-                finalOwnerBalance = fromWei(_balance).valueOf();
+                finalOwnerBalance = _balance;
                 return ico.balanceOf.call(customerAccount);
             }).then(function(_balance) {
-                finalCusBalance = fromWei(_balance).valueOf();
-                var cusDiff = finalCusBalance - initialCusBalance;
-                var ownerDiff = finalOwnerBalance - initialOwnerBalance;
-
-                console.log("before", initialCusBalance, "after", finalCusBalance);
+                finalCusBalance = _balance;
+                var cusDiff = finalCusBalance.minus(initialCusBalance).valueOf();
+                var ownerDiff = finalOwnerBalance.minus(initialOwnerBalance).valueOf();
+                var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).valueOf();
 
                 assert.equal(fromWei(cusDiff), expectedNet, "the customers account should have been credited");
-                assert.equal(ownerDiff, 0-expectedNet, "the owner account should be less");
-                assert.equal(ethBalance, toWei(eth), "ether balance is incorrect");
+                assert.equal(fromWei(ownerDiff), 0-expectedNet, "the owner account should be less");
+                assert.equal(fromWei(ethDiff), eth, "ether balance is incorrect");
             });
         }); 
+    });
+
+    var pricingTestData = [];
+    
+    pricingTestData.push({ "price": 5, "eth": 5, "expected": 1});
+    pricingTestData.push({ "price": 5, "eth": 10, "expected": 2});
+    pricingTestData.push({ "price": 5, "eth": 2.5, "expected": 0.5});
+    pricingTestData.push({ "price": 5, "eth": 1, "expected": 0.2});
+    pricingTestData.push({ "price": 1, "eth": 5, "expected": 5});
+    pricingTestData.push({ "price": 0.5, "eth": 0.5, "expected": 1});
+    pricingTestData.push({ "price": 0.5, "eth": 5, "expected": 10});
+    pricingTestData.push({ "price": 0.5, "eth": 1, "expected": 2});
+    pricingTestData.push({ "price": 0.6, "eth": 1, "expected": 1.666666666666666666});
+    
+    describe("calculateTokens", function() {
+        for(var i=0;i < pricingTestData.length;i++) {
+            var data = pricingTestData[i];
+            (function(td) {
+                it("should calculate the correct price for price: " + td.price + " for eth: " + td.eth, function(done) {
+                    var ico;
+                    var price = toWei(td.price);
+                    var eth = toWei(td.eth);
+        
+                    PreICO.deployed().then(function(instance) {
+                        ico = instance;
+                        
+                        return ico.setPrice(price);
+                    }).then(function() {
+                        
+                        return ico.calculatTokens.call(eth);
+                    }).then(function(tokens) {
+                        assert.equal(fromWei(tokens.valueOf()), (td.expected));
+                        done();
+                    });        
+                });
+            })(data);
+        }
+    });
+
+    describe("buyTokens", function() {
+        for(var i=0;i < pricingTestData.length;i++) {
+            var data = pricingTestData[i];
+            (function(td, user) {
+                it("should buy the correct amount of tokens with " + td.price + " for eth: " + td.eth, function(done) {
+                    var ico;
+                
+                    var customerAccount = accounts[3];
+                    var owner = accounts[0];
+                    
+                    var ownerInitialBalance, ownerFinalBalance
+                    var customerInitialBalance, customerFinalBalance;
+                    
+                    var payment = toWei(td.eth);
+                    var price = toWei(td.price);
+                    var expected = td.expected;
+                    var ethBalanceBefore, ethBalanceAfter;
+        
+                    PreICO.deployed().then(function(instance) {
+                        ico = instance;
+
+                        return ico.setPrice(price);
+                    }).then(function() {
+                        return ico.ethBalance.call();
+                    }).then(function(_ethBalance) {
+                        ethBalanceBefore = _ethBalance;
+                        return ico.balanceOf.call(owner);
+                    }).then(function(_balance) {
+                        ownerInitialBalance = _balance;
+                        return ico.balanceOf.call(customerAccount);
+                    }).then(function(_balance) {
+                        customerInitialBalance = _balance;
+                        return ico.buyTokens({ value: payment,  from: customerAccount });
+                    }).then(function() {
+                        return ico.ethBalance.call();
+                    }).then(function(_ethBalance) {
+                        ethBalanceAfter = _ethBalance;
+                        return ico.balanceOf.call(owner);
+                    }).then(function(_balance) {
+                        ownerFinalBalance = _balance;
+                        return ico.balanceOf.call(customerAccount);
+                    }).then(function(_balance) {
+                        customerFinalBalance = _balance;
+                        var cusDiff = customerFinalBalance.minus(customerInitialBalance).valueOf();
+                        var ownerDiff = ownerFinalBalance.minus(ownerInitialBalance).valueOf();
+                        var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).valueOf();
+                        
+                        assert.equal(fromWei(cusDiff), td.expected, "the customers account should have been credited");
+                        assert.equal(fromWei(ownerDiff), 0-td.expected, "the owner account should be less");
+                        assert.equal(ethDiff, toWei(td.eth), "ether balance is incorrect");
+                        done();
+                    });
+                });
+            })(data, i + 1);
+        }
     });
 });
 
 function toWei(value) {
     return web3.toWei(value, "ether");
 }
-
-
-
 
 function fromWei(value) {
     return web3.fromWei(value, "ether");
