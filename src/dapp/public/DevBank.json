@@ -1,0 +1,70 @@
+{
+  "contract_name": "DevBank",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [
+        {
+          "name": "success",
+          "type": "bool"
+        }
+      ],
+      "payable": true,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "currentBalance",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "deposit",
+      "outputs": [
+        {
+          "name": "success",
+          "type": "bool"
+        }
+      ],
+      "payable": true,
+      "type": "function"
+    },
+    {
+      "payable": true,
+      "type": "fallback"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000f57600080fd5b5b6101608061001f6000396000f300606060405236156100545763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632e1a7d4d811461005c578063ce845d1d1461007b578063d0e30db0146100a0575b5b600080fd5b005b6100676004356100bc565b604051901515815260200160405180910390f35b341561008657600080fd5b61008e610120565b60405190815260200160405180910390f35b610067610126565b604051901515815260200160405180910390f35b600080548290106101165773ffffffffffffffffffffffffffffffffffffffff331682156108fc0283604051600060405180830381858888f19350505050151561010557600080fd5b50600080548290039055600161011a565b5060015b5b919050565b60005481565b600080543401905560015b905600a165627a7a72305820a601076fd18e0dae59b35090a74a10cf5e0f17d305828f11032a13eb5279af3f0029",
+  "networks": {
+    "1505902530226": {
+      "events": {},
+      "links": {},
+      "address": "0x0164abb5bd4286aa5a48c7030d1934724dcb83c6",
+      "updated_at": 1505906196276
+    },
+    "1505906490154": {
+      "events": {},
+      "links": {},
+      "address": "0xca8304bd0a5dd55bdeafacd6bd3bb4290b12e381",
+      "updated_at": 1505906497985
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1505906735258
+}

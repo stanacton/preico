@@ -381,11 +381,11 @@
         }
       },
       "links": {
-        "SafeMath": "0xcdbeec8f884cbd63f9008671c779f8b06354c6b8",
-        "SafeMathLib": "0x220994b63508dfd57affe6a78e46ea0593efc2b5"
+        "SafeMath": "0xa076971bf74e95780fbc4b543e32c08d4e7dfc70",
+        "SafeMathLib": "0x1cf79c05130e778b517d886742f14989aa566856"
       },
-      "address": "0x66aaaf4607c509976da27a50272a90c2e14b9813",
-      "updated_at": 1505577620903
+      "address": "0xa319a45177a1763be3fae56e0625f51a3ffd25c7",
+      "updated_at": 1505588366528
     },
     "1505430405210": {
       "events": {
@@ -746,8 +746,116 @@
       },
       "address": "0xea6d0d8de0c41f84bf075cff0a2b2cff9ce04430",
       "updated_at": 1505462863571
+    },
+    "1505902530226": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        }
+      },
+      "links": {
+        "SafeMath": "0x79332fe0d200d4dd27944231ba5a5d275415b2e3",
+        "SafeMathLib": "0xa167b586c73cfc251e593755e1c697b82c2ccc49"
+      },
+      "address": "0x3be6cb4269b546f2210915e6cecb1675f2521e77",
+      "updated_at": 1505906196277
+    },
+    "1505906490154": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        }
+      },
+      "links": {
+        "SafeMath": "0x72612efa36ce696fc882d713ad615112c3288410",
+        "SafeMathLib": "0xe208f0b97eb3fb207de4c1a355e80f34a71cd64f"
+      },
+      "address": "0xcde43b38ae78d957a541ee2ad357df111d37e594",
+      "updated_at": 1505906497979
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1505577620903
+  "updated_at": 1505906497979
 }

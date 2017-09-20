@@ -29,6 +29,18 @@ router.get('/config/preico/abi', function(req, res) {
         res.json(config.abi);
     });
 });
+router.get('/config/devbank/abi', function(req, res) {
+    let configPath = path.join(__dirname, "../public/DevBank.json");
+    fs.readFile(configPath, { encoding: "utf-8"}, function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(501).end();
+        }
+        let config = JSON.parse(result);
+
+        res.json(config.abi);
+    });
+});
 
 
 module.exports = router;
