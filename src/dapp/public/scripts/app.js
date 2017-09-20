@@ -143,6 +143,10 @@ app.controller("VotingCtrl", ["$scope", "web3", function ($scope, web3) {
 app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($scope, web3, ico, $rootScope) {
 
     function updateBalance() {
+        if (!web3.existingProvider) {
+            return;
+        }
+
         ico.pricePerETH(function (err, price) {
             if (err) {
                 return console.error(err);
@@ -175,7 +179,17 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
     };
 
     $scope.buy = function () {
-        $scope.displayConfirm = true;
+        if (web3.existingProvider) {
+            $scope.displayConfirm = true;
+        } else {
+            $scope.buyTokendata = ico.buyTokenData(function (err, data) {
+                $scope.displayConfirmData = true;
+                $scope.contractAddress = ico.contractAddress;
+                $scope.buyTokenData = data;
+                console.log(ico.contractAddress);
+               // $scope.$apply();
+            });
+        }
     };
 
     $scope.cancel = function () {
@@ -247,6 +261,7 @@ app.config(function ($routeProvider, $locationProvider) {
                         return $http.get("/config/address").then(function (result) {
                             var address = result.data;
                             ico = ICO.at(address.PreICO.address);
+                            ico.contractAddress = address.PreICO.address;
                             deferred.resolve(ico);
                         }, function (err) {
                             alert("Couldn't load the coin address");
@@ -333,6 +348,17 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function buyTokenData(next) {
+            getICO().then(function (ico) {
+                var tranData = ico.buyTokens.getData();
+                if (next) {
+                    next(null, tranData);
+                } else {
+                    return tranData;
+                }
+            });
+        }
+
         function setPrice(price, next) {
             var wei = web3.toWei(price, "ether");
             ico.setPrice.sendTransaction(wei, { gas: 30000 }, function (err, result) {
@@ -350,10 +376,6 @@ app.config(function ($routeProvider, $locationProvider) {
                 });
             }, function (err) {
                 console.error(err);
-            });
-
-            balanceOf("0x1bd105ce0ebafbbc6e9bd0b29c3e90779477fcdd", function (err, result) {
-                console.log("owner: ", err, result);
             });
         });
 
@@ -440,19 +462,19 @@ app.config(function ($routeProvider, $locationProvider) {
             symbol: symbol,
             tokensSold: tokensSold,
             tokensRemaining: tokensRemaining,
-            ethBalance: ethBalance
+            ethBalance: ethBalance,
+            buyTokenData: buyTokenData
         };
     }]);
 })();
 (function (Web3) {
     app.factory("web3", [function(){
-
         if (typeof web3 !== 'undefined') {
             web3 = new Web3(web3.currentProvider);
             console.log("webProvider: ", web3.currentProvider);
             web3.existingProvider = true;
         } else {
-          //  web3 = new Web3(new Web3.providers.HttpProvider());
+            web3 = new Web3();
             web3.existingProvider = false;
         }
 

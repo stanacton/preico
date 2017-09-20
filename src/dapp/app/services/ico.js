@@ -14,6 +14,7 @@
                         return $http.get("/config/address").then(function (result) {
                             var address = result.data;
                             ico = ICO.at(address.PreICO.address);
+                            ico.contractAddress = address.PreICO.address;
                             deferred.resolve(ico);
                         }, function (err) {
                             alert("Couldn't load the coin address");
@@ -100,6 +101,17 @@
             });
         }
 
+        function buyTokenData(next) {
+            getICO().then(function (ico) {
+                var tranData = ico.buyTokens.getData();
+                if (next) {
+                    next(null, tranData);
+                } else {
+                    return tranData;
+                }
+            });
+        }
+
         function setPrice(price, next) {
             var wei = web3.toWei(price, "ether");
             ico.setPrice.sendTransaction(wei, { gas: 30000 }, function (err, result) {
@@ -117,10 +129,6 @@
                 });
             }, function (err) {
                 console.error(err);
-            });
-
-            balanceOf("0x1bd105ce0ebafbbc6e9bd0b29c3e90779477fcdd", function (err, result) {
-                console.log("owner: ", err, result);
             });
         });
 
@@ -207,7 +215,8 @@
             symbol: symbol,
             tokensSold: tokensSold,
             tokensRemaining: tokensRemaining,
-            ethBalance: ethBalance
+            ethBalance: ethBalance,
+            buyTokenData: buyTokenData
         };
     }]);
 })();

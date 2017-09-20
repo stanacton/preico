@@ -1,6 +1,10 @@
 app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($scope, web3, ico, $rootScope) {
 
     function updateBalance() {
+        if (!web3.existingProvider) {
+            return;
+        }
+
         ico.pricePerETH(function (err, price) {
             if (err) {
                 return console.error(err);
@@ -33,7 +37,17 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
     };
 
     $scope.buy = function () {
-        $scope.displayConfirm = true;
+        if (web3.existingProvider) {
+            $scope.displayConfirm = true;
+        } else {
+            $scope.buyTokendata = ico.buyTokenData(function (err, data) {
+                $scope.displayConfirmData = true;
+                $scope.contractAddress = ico.contractAddress;
+                $scope.buyTokenData = data;
+                console.log(ico.contractAddress);
+               // $scope.$apply();
+            });
+        }
     };
 
     $scope.cancel = function () {

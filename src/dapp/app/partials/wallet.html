@@ -19,4 +19,14 @@
         <button class="btn btn-primary" ng-click="confirm()">Confirm</button>
         <a ng-click="cancel()">Cancel</a>
     </div>
+
+    <div id="confirm-data" ng-show="displayConfirmData">
+        <h3>Confirm Purchase</h3>
+
+        <p>You need to send the   <strong>{{ ethAmount }} ETH</strong> to the following address: </p>
+
+        <p class="contract-address">{{ contractAddress }}</p>
+        <p class="contract-data">{{ buyTokenData }}</p>
+
+    </div>
 </div>
