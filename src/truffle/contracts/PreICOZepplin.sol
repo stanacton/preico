@@ -3,6 +3,7 @@ pragma solidity ^0.4.11;
 import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./zeppelin-solidity/contracts/token/StandardToken.sol";
+import "./zeppelin-solidity/contracts/token/PausableToken.sol";
 
 contract PreICOZepplin is StandardToken {
     address public owner;
@@ -12,10 +13,6 @@ contract PreICOZepplin is StandardToken {
   
     uint256 public constant INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals));
     uint _price;
-
-    //mapping(address => uint) balances;
-
-    mapping(address => mapping (address => uint)) allowed;
 
     function PreICOZepplin() {
         totalSupply = INITIAL_SUPPLY;
@@ -45,23 +42,17 @@ contract PreICOZepplin is StandardToken {
         }
     }
 
-    function transferFrom(address _from, address _to, uint _value) returns (bool success) {
+    function transferFrom(address _from, address _to, uint _value) returns (bool) {
         if (balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0 && balances[_to] + _value > balances[_to]) {
             balances[_from] -= _value;
             allowed[_from][msg.sender] -= _value;
             balances[_to] += _value;
-            success = true;
-
             Transfer(_from, _to, _value);
+            return true;
         } else {
-            success = false;
+            revert();
+            return false;
         }
-    }
-
-    function approve(address _spender, uint _value) returns (bool success) {
-        allowed[msg.sender][_spender] = _value;
-        success = true;
-        Approval(msg.sender, _spender, _value);
     }
 
     function allowance(address _owner, address _spender) constant returns (uint remaining) {
