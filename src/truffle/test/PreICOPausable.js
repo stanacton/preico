@@ -1,7 +1,7 @@
 
-var PreICO = artifacts.require("../contracts/PreICOZepplin.sol");
+var PreICO = artifacts.require("../contracts/PreICO.sol");
 
-contract("PreICO Zepplin when paused", function(accounts) {
+contract("PreICO when paused", function(accounts) {
     
     it("should compile and deploy!!", function(){
         var ownerBalance = 0;
