@@ -62,4 +62,10 @@ contract PreICO is PausableToken {
         uint tens = ten ** (decimals);
         return SafeMath.mul(eth, tens) / _price;
     }
+
+    function withdrawEth() onlyOwner returns (bool) {
+        uint amount = ethBalance;
+        ethBalance = 0;
+        require(msg.sender.send(amount));
+    }
 }

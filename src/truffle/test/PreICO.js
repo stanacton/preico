@@ -616,6 +616,44 @@ contract("PreICO", function(accounts) {
         }
     });
 
+    describe("withdrawEth", function() {
+
+        var owner = accounts[0];
+        var user1 = accounts[2];
+
+        it("should withdraw to the owner account", function() {
+            var amount = toWei(3);
+
+            var ownerBalanceBefore, contractBalanceBefore, contractBalanceAfter, ownerBalanceAfter, ethBalanceAfter;
+            
+            return PreICO.deployed().then(function(result) {
+                ico = result;
+
+                return web3.eth.getBalance(owner);
+            }).then(function(balance) {
+                ownerBalanceBefore = balance;
+                return web3.eth.getBalance(ico.address);
+            }).then(function(balance) {
+                contractBalanceBefore = balance;
+                return ico.withdrawEth.sendTransaction({ from: owner });
+            }).then(function() {
+                return web3.eth.getBalance(owner);
+            }).then(function(balance) {
+                ownerBalanceAfter = balance;
+                return web3.eth.getBalance(ico.address);
+            }).then(function(balance) {
+                contractBalanceAfter = balance;
+                return ico.ethBalance.call();
+            }).then(function(balance) {
+                ethBalanceAfter = balance;
+                var ownerDiff = ownerBalanceAfter.minus(ownerBalanceBefore);
+                var contractDiff = contractBalanceAfter.minus(contractBalanceBefore);
+
+                assert.equal(ethBalanceAfter, 0, "ethBalance should have been 0");
+//                 assert.equal(fromWei(ownerDiff).valueOf(), 0 - fromWei(amount), "Contract blanace is wrong");
+            });
+        });
+    });
 });
 
 function toWei(value) {

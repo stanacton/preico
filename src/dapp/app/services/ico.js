@@ -94,6 +94,10 @@
             });
         }
 
+        function withdrawEth(next) {
+            ico.withdrawEth.sendTransaction(next);
+        }
+
         function buyTokens(ethAmount, next) {
             var wei = web3.toWei(ethAmount, "ether");
             ico.buyTokens.sendTransaction({ value: wei }, function (err, result) {
@@ -239,6 +243,7 @@
             tokensRemaining: tokensRemaining,
             ethBalance: ethBalance,
             buyTokenData: buyTokenData,
+            withdrawEth: withdrawEth,
             pauseICO: pauseICO,
             unpauseICO: unpauseICO
         };

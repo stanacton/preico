@@ -138,6 +138,17 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.withdrawEth = function () {
+        ico.withdrawEth(function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the withdraw was successful.");
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
@@ -480,6 +491,10 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function withdrawEth(next) {
+            ico.withdrawEth.sendTransaction(next);
+        }
+
         function buyTokens(ethAmount, next) {
             var wei = web3.toWei(ethAmount, "ether");
             ico.buyTokens.sendTransaction({ value: wei }, function (err, result) {
@@ -625,6 +640,7 @@ app.config(function ($routeProvider, $locationProvider) {
             tokensRemaining: tokensRemaining,
             ethBalance: ethBalance,
             buyTokenData: buyTokenData,
+            withdrawEth: withdrawEth,
             pauseICO: pauseICO,
             unpauseICO: unpauseICO
         };
