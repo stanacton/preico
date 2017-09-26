@@ -257,7 +257,7 @@ contract("PreICO when paused", function(accounts) {
         for(var i=0;i < pricingTestData.length;i++) {
             var data = pricingTestData[i];
             (function(td, user) {
-                it("should buy the correct amount of tokens with " + td.price + " for eth: " + td.eth, function(done) {
+                it("should fail and do nothing when " + td.price + " for eth: " + td.eth, function(done) {
                     var ico;
                 
                     var customerAccount = accounts[3];
