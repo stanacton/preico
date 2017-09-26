@@ -44,7 +44,7 @@ contract PreICOZepplin is PausableToken {
         return balances[owner];
     }
 
-    function buyTokens() payable returns (bool) {
+    function buyTokens() payable whenNotPaused returns (bool) {
         ethBalance += msg.value;
         uint tokens = this.calculatTokens(msg.value);
         if (balances[owner] >= tokens && tokens > 0 && balances[msg.sender] + tokens > balances[msg.sender]) { 
