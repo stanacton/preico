@@ -14,13 +14,29 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
 
     function getTotalSupply() {
         ico.totalSupply(function (err, totalSupply) {
+            if (err) {
+                return console.error(err);
+            }
             $scope.totalSupply = totalSupply;
+            $scope.$apply();
+        });
+    }
+
+    function paused() {
+        ico.paused(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
+            $scope.paused = data;
             $scope.$apply();
         });
     }
 
     function symbol() {
         ico.symbol(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
             $scope.symbol = data;
             $scope.$apply();
         });
@@ -28,6 +44,9 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
 
     function name() {
         ico.name(function (err, name) {
+            if (err) {
+                return console.error(err);
+            }
             $scope.name = name;
             $scope.$apply();
         });
@@ -35,6 +54,9 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
 
     function ethBalance() {
         ico.ethBalance(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
             $scope.ethBalance = data;
             $scope.$apply();
         });
@@ -42,6 +64,9 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
 
     function tokensSold() {
         ico.tokensSold(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
             $scope.tokensSold = data;
             $scope.$apply();
         });
@@ -49,6 +74,9 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
 
     function tokensRemaining() {
         ico.tokensRemaining(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
             $scope.tokensRemaining = data;
             $scope.$apply();
         });
@@ -65,6 +93,28 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.pause = function () {
+        ico.pauseICO(function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the pause was successful.");
+        });
+    };
+
+    $scope.unpause = function () {
+        ico.unpauseICO(function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the unpause was successful.");
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
@@ -77,6 +127,7 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         ethBalance();
         tokensSold();
         tokensRemaining();
+        paused();
     }
 
     updateDetails();

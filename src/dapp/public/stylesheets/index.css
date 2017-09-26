@@ -41,14 +41,17 @@ h6 {
 #confirm a {
   color: black;
 }
+#page-coin-admin .kv-container {
+  position: relative;
+  display: block;
+}
 #page-coin-admin .key-value {
   padding: 10px;
-  width: 200px;
   height: 75px;
   border-radius: 5px;
   border: 1px solid #12b9c3;
   text-align: center;
-  margin: 5px;
+  margin: 1px;
   float: left;
   display: block;
 }
@@ -60,4 +63,16 @@ h6 {
   font-size: 200%;
   font-weight: bold;
   color: white;
+}
+#page-coin-admin .admin-action {
+  display: block;
+  float: none;
+  border-radius: 5px;
+  border: 1px solid #12b9c3;
+  padding: 15px;
+  margin-top: 15px;
+}
+#page-coin-admin .admin-action h2,
+#page-coin-admin .admin-action h3 {
+  margin-top: 2px;
 }

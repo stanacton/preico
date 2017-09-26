@@ -1,45 +1,81 @@
 <div id="page-coin-admin">
     <h2>Coin Settings</h2>
-    <div class="form-group">
-        <label for="newPrice">Price in ETH</label>
-        <input class="form-control" type="number" id="newPrice" ng-model="item.newPrice" placeholder="Price in ETH"/>
-    </div>
-    <button class="btn btn-primary" ng-click="setPrice(item.newPrice)">Set Price</button>
-    <div>
-        <div class="key-value">
+
+
+
+    <div class="row">
+        <div class="key-value col-md-3">
             <div class="key">Price per ETH</div>
             <div class="value">{{ price }}</div>
         </div>
 
-        <div class="key-value">
+        <div class="key-value col-md-3">
             <div class="key">Total Supply</div>
             <div class="value">{{ totalSupply }}</div>
         </div>
 
-        <div class="key-value">
+        <div class="key-value col-md-3">
             <div class="key">Name</div>
             <div class="value">{{ name }}</div>
         </div>
 
-        <div class="key-value">
+        <div class="key-value col-md-3">
             <div class="key">Symbol</div>
             <div class="value">{{ symbol }}</div>
         </div>
 
-        <div class="key-value">
+        <div class="key-value col-md-3">
             <div class="key">ETHER Balance</div>
             <div class="value">{{ ethBalance }}</div>
         </div>
 
-        <div class="key-value">
+        <div class="key-value col-md-3">
             <div class="key">Tokens Sold</div>
             <div class="value">{{ tokensSold }}</div>
         </div>
 
-        <div class="key-value">
+        <div class="key-value col-md-3">
             <div class="key">Tokens Remaining</div>
             <div class="value">{{ tokensRemaining }}</div>
         </div>
 
+        <div class="key-value col-md-3">
+            <div class="key">Paused / Running</div>
+            <div class="value">
+                <span class="label label-danger" ng-show="paused === true">Paused</span>
+                <span class="label label-success" ng-show="paused !== true">Running</span>
+
+            </div>
+        </div>
+
     </div>
+
+    <div class="row admin-action">
+        <h3>Price Update</h3>
+        <div class="form-group">
+            <label for="newPrice">Price in ETH</label>
+            <input class="form-control" type="number" id="newPrice" ng-model="item.newPrice" placeholder="Price in ETH"/>
+        </div>
+        <button class="btn btn-primary" ng-click="setPrice(item.newPrice)">Set Price</button>
+    </div>
+
+    <div class="row admin-action">
+        <h3>Pause ICO <span class="label label-danger" ng-show="paused === true">Paused!!</span>  <span class="label label-success" ng-show="paused === false">Running</span> </h3>
+        <p>Pausing the ICO stops any user from calling the following: </p>
+        <ul>
+            <li>approve</li>
+            <li>transfer</li>
+            <li>transferFrom</li>
+            <li>increaseApproval</li>
+            <li>decreaseApproval</li>
+        </ul>
+        <p>Do you want to pause the ICO.  WARNING, this will effect all your customers!!</p>
+        <p>
+            <button ng-click="pause()" class="btn btn-danger btn-lg" ng-show="paused !== true">Pause ICO</button>
+            <button ng-click="unpause()" class="btn btn-primary btn-lg" ng-show="paused === true">Unpause ICO</button>
+
+        </p>
+
+    </div>
+
 </div>

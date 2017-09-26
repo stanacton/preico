@@ -101,6 +101,14 @@
             });
         }
 
+        function pauseICO(next) {
+            ico.pause.sendTransaction(next);
+        }
+
+        function unpauseICO(next) {
+            ico.unpause.sendTransaction(next);
+        }
+
         function buyTokenData(next) {
             getICO().then(function (ico) {
                 var tranData = ico.buyTokens.getData();
@@ -146,10 +154,23 @@
             });
         }
 
-
         function symbol(next) {
             getICO().then(function (ico) {
                 ico.symbol(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function paused(next) {
+            getICO().then(function (ico) {
+                ico.paused(function (err, result) {
                     if (err) {
                         return next(err);
                     }
@@ -212,11 +233,14 @@
             setPrice: setPrice,
             totalSupply: totalSupply,
             name: name,
+            paused: paused,
             symbol: symbol,
             tokensSold: tokensSold,
             tokensRemaining: tokensRemaining,
             ethBalance: ethBalance,
-            buyTokenData: buyTokenData
+            buyTokenData: buyTokenData,
+            pauseICO: pauseICO,
+            unpauseICO: unpauseICO
         };
     }]);
 })();
