@@ -42,23 +42,6 @@ contract PreICOZepplin is StandardToken {
         }
     }
 
-    function transferFrom(address _from, address _to, uint _value) returns (bool) {
-        if (balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0 && balances[_to] + _value > balances[_to]) {
-            balances[_from] -= _value;
-            allowed[_from][msg.sender] -= _value;
-            balances[_to] += _value;
-            Transfer(_from, _to, _value);
-            return true;
-        } else {
-            revert();
-            return false;
-        }
-    }
-
-    function allowance(address _owner, address _spender) constant returns (uint remaining) {
-        return allowed[_owner][_spender];
-    }
-
     function pricePerETH() constant returns (uint) {
         return _price;
     }
@@ -97,7 +80,4 @@ contract PreICOZepplin is StandardToken {
         uint tens = ten ** (decimals);
         return SafeMath.mul(eth, tens) / _price;
     }
-
-    event Transfer(address indexed _from, address indexed _to, uint _value);
-    event Approval(address indexed _owner, address indexed _spender, uint _value);
 }

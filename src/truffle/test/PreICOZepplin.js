@@ -57,11 +57,11 @@ contract("PreICO Zepplin", function(accounts) {
             }).then(function(recBalance) {
                 assert.equal(ownerBalance.valueOf(), 999900, "the owner balance did not go down.");
                 assert.equal(recBalance.valueOf(), transferAmount, "the receiver balance was incorret");
-    
+
                 assert.equal(events.length, 1, "events didn't contain an transfer event");
-                assert.equal(events[0].args._from.valueOf(), account_from, "the from account was incorrect");
-                assert.equal(events[0].args._to.valueOf(), account_to, "the to account was incorrect");
-                assert.equal((events[0].args._value).valueOf(), transferAmount, "the value was incorrect");
+                assert.equal(events[0].args.from, account_from, "the from account was incorrect");
+                assert.equal(events[0].args.to, account_to, "the to account was incorrect");
+                assert.equal((events[0].args.value).valueOf(), transferAmount, "the value was incorrect");
             });
         });
    
@@ -186,7 +186,6 @@ contract("PreICO Zepplin", function(accounts) {
                 assert.equal(events[0].args._to.valueOf(), account_to, "events didn't contain a transfer event");
                 assert.equal(events[0].args._value.valueOf(), amountToTransfer, "events didn't contain an transfer event");
             }).catch(function() {
-                console.log("££££££££££££££££££££££££££££££££££££££££££££££");
                 assert.isTrue(true);
              });
         });
@@ -405,9 +404,9 @@ contract("PreICO Zepplin", function(accounts) {
                 assert.equal(allowanceAfterAllocation, spendAmount, "The allocation amount is incorrect.");
     
                 assert.equal(events.length, 1, "events didn't contain an Approval event");
-                assert.equal(events[0].args._owner.valueOf(), owner, "the owner was incorrect");
-                assert.equal(events[0].args._spender.valueOf(), spender, "the spender was incorrect");
-                assert.equal(events[0].args._value.valueOf(), spendAmount, "the value was incorrect");
+                assert.equal(events[0].args.owner.valueOf(), owner, "the owner was incorrect");
+                assert.equal(events[0].args.spender.valueOf(), spender, "the spender was incorrect");
+                assert.equal(events[0].args.value.valueOf(), spendAmount, "the value was incorrect");
             });
         });
     });
