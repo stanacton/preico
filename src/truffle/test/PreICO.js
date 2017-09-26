@@ -1,3 +1,4 @@
+/*
 var PreICO = artifacts.require("../contracts/PreICO.sol");
 
 contract("PreICO", function(accounts) {
@@ -764,3 +765,5 @@ function toWei(value) {
 function fromWei(value) {
     return web3.fromWei(value, "ether");
 }
+
+*/
