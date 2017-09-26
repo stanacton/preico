@@ -1,13 +1,10 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.11;
 
-//import "./ERC20.sol";
+import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./zeppelin-solidity/contracts/math/SafeMath.sol";
+import "./ERC20.sol";
 
-import "./SafeMath.sol";
-import "./SafeMathLib.sol";
-
-contract PreICO is SafeMath { //is ERC20 {
-    using SafeMathLib for uint;
-
+contract PreICO is ERC20 { //is ERC20 {
     address public owner;
     string public constant name = "BB Token";
     string public constant symbol = "BBTOK";
@@ -109,7 +106,7 @@ contract PreICO is SafeMath { //is ERC20 {
     function calculatTokens(uint256 eth) constant returns (uint256) {
         uint256 ten = 10;
         uint256 tens = ten ** (decimals);
-        return eth.times(tens) / _price;
+        return SafeMath.mul(eth, tens) / _price;
     }
 
     event Transfer(address indexed _from, address indexed _to, uint _value);
