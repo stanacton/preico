@@ -1,5 +1,6 @@
 var PreICO = artifacts.require("./PreICO.sol");
 var DevBank = artifacts.require("./DevBank.sol");
+var path = require("path");
 
 var fs = require("fs");
 
@@ -17,16 +18,19 @@ module.exports = function(deployer) {
     };
 
     var txt = JSON.stringify(addressData);
-    fs.writeFileSync("../dapp/public/address.json", txt, { encoding: "utf-8"});
-    
-    if (fs.exists("build/contracts/PreICO.json")) {
-      fs.createReadStream('build/contracts/PreICO.json').pipe(fs.createWriteStream('../dapp/public/PreICO.json'));
+    var addressPath = path.join(__dirname, "../../dapp/public/address.json");
+    fs.writeFileSync(addressPath, txt, { encoding: "utf-8"});
+
+    var preicopath = path.join(__dirname, "../build/contracts/PreICO.json");
+    if (fs.existsSync(preicopath)) {
+      fs.createReadStream(preicopath).pipe(fs.createWriteStream('../dapp/public/PreICO.json'));
     } else {
       console.error("PreICO.json wasn't deployed");
     }
 
-    if (fs.exists("build/contracts/DevBank.json")) {
-      fs.createReadStream('build/contracts/DevBank.json').pipe(fs.createWriteStream('../dapp/public/DevBank.json'));
+    var devbankpath = path.join(__dirname, "../build/contracts/DevBank.json");
+    if (fs.existsSync(devbankpath)) {
+      fs.createReadStream(devbankpath).pipe(fs.createWriteStream('../dapp/public/DevBank.json'));
     } else {
       console.error("DevBank.json wasn't deployed.");
     }
