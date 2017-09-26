@@ -30,18 +30,6 @@ contract PreICOZepplin is StandardToken {
         return balances[_owner];
     }
 
-    function transfer(address _to, uint _value) returns (bool success) {
-        if (balances[msg.sender] >= _value && _value > 0 && balances[_to] + _value > balances[_to]) {
-            balances[msg.sender] -= _value;
-            balances[_to] += _value;
-
-            success = true;
-            Transfer(msg.sender, _to, _value);
-        } else {
-            success = false;
-        }
-    }
-
     function pricePerETH() constant returns (uint) {
         return _price;
     }

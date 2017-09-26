@@ -79,9 +79,14 @@ contract("PreICO Zepplin", function(accounts) {
             }).then(function(_fromBalance) {
                 from_balance_before = (_fromBalance).valueOf();
                 return ico.balanceOf.call(account_to);
-            }).then(function(_toBalance) {
+            }).then(async function(_toBalance) {
                 to_balance_before = (_toBalance).valueOf();
-                return ico.transfer(account_to, toWei(10000000), { from: account_from});
+                try {
+                    await ico.transfer(account_to, toWei(10000000), { from: account_from});
+                    return true;
+                } catch(error) {
+                    return false;
+                }
             }).then(function(_result) {
                 result = _result;
                 return ico.balanceOf.call(account_from);
@@ -113,9 +118,14 @@ contract("PreICO Zepplin", function(accounts) {
             }).then(function(_fromBalance1) {
                 from_balance_before = _fromBalance1.valueOf();
                 return ico.balanceOf.call(account_to);
-            }).then(function(_toBalance) {
+            }).then(async function(_toBalance) {
                 to_balance_before = _toBalance.valueOf();
-                return ico.transfer(account_to, -55, { from: account_from});
+                try {
+                    await ico.transfer(account_to, -55, { from: account_from});
+                    return true;
+                } catch(error) {
+                    return false;
+                }
             }).then(function(_result) {
                 result = _result;
                 return ico.balanceOf.call(account_from);
