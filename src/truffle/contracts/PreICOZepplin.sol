@@ -2,10 +2,9 @@ pragma solidity ^0.4.11;
 
 import "./zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./zeppelin-solidity/contracts/math/SafeMath.sol";
-import "./zeppelin-solidity/contracts/token/StandardToken.sol";
 import "./zeppelin-solidity/contracts/token/PausableToken.sol";
 
-contract PreICOZepplin is StandardToken {
+contract PreICOZepplin is PausableToken {
     address public owner;
     string public constant name = "BB Token";
     string public constant symbol = "BBTOK";
@@ -24,10 +23,6 @@ contract PreICOZepplin is StandardToken {
 
     function() payable {
         revert();
-    }
-
-    function balanceOf(address _owner) constant returns (uint) {
-        return balances[_owner];
     }
 
     function pricePerETH() constant returns (uint) {
