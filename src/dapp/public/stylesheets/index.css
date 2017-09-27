@@ -76,3 +76,10 @@ h6 {
 #page-coin-admin .admin-action h3 {
   margin-top: 2px;
 }
+#page-wallet .key {
+  color: white;
+}
+#page-wallet .value {
+  font-weight: bold;
+  font-size: 140%;
+}

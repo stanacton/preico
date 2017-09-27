@@ -105,6 +105,7 @@
             });
         }
 
+
         function pauseICO(next) {
             ico.pause.sendTransaction(next);
         }
@@ -115,9 +116,12 @@
 
         function buyTokenData(next) {
             getICO().then(function (ico) {
-                var tranData = ico.buyTokens.getData();
+                var details = {};
+                details.tranData = ico.buyTokens.getData();
+                details.contractAddress = ico.contractAddress;
+
                 if (next) {
-                    next(null, tranData);
+                    next(null, details);
                 } else {
                     return tranData;
                 }

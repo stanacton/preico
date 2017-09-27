@@ -339,13 +339,16 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
     $scope.buy = function () {
         if (web3.existingProvider) {
             $scope.displayConfirm = true;
+            $scope.buyTokendata = ico.buyTokenData(function (err, details) {
+                $scope.contractAddress = details.contractAddress;
+                $scope.buyTokenData = details.tranData;
+            });
         } else {
-            $scope.buyTokendata = ico.buyTokenData(function (err, data) {
+            $scope.buyTokendata = ico.buyTokenData(function (err, details) {
                 $scope.displayConfirmData = true;
-                $scope.contractAddress = ico.contractAddress;
-                $scope.buyTokenData = data;
+                $scope.contractAddress = details.contractAddress;
+                $scope.buyTokenData = details.tranData;
                 console.log(ico.contractAddress);
-               // $scope.$apply();
             });
         }
     };
@@ -514,6 +517,7 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+
         function pauseICO(next) {
             ico.pause.sendTransaction(next);
         }
@@ -524,9 +528,12 @@ app.config(function ($routeProvider, $locationProvider) {
 
         function buyTokenData(next) {
             getICO().then(function (ico) {
-                var tranData = ico.buyTokens.getData();
+                var details = {};
+                details.tranData = ico.buyTokens.getData();
+                details.contractAddress = ico.contractAddress;
+
                 if (next) {
-                    next(null, tranData);
+                    next(null, details);
                 } else {
                     return tranData;
                 }

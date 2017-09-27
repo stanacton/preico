@@ -15,9 +15,26 @@
 
         <p>You are about to purchase  <strong>{{ tokenAmount }} BBICO at {{ ethAmount }} ETH</strong></p>
 
+        <p>If you're running this in your wallet browser, then click the button below to confirm.</p>
         <p>Are you sure you want to continue?</p>
         <button class="btn btn-primary" ng-click="confirm()">Confirm</button>
         <a ng-click="cancel()">Cancel</a>
+        <hr />
+        <p>If you're not in your wallet browser, then you can use your own wallet to buy tokens. The details are:</p>
+        <div class="key-value">
+            <div class="key">Contract Address</div>
+            <div class="value">{{ contractAddress }}</div>
+        </div>
+        <div class="key-value">
+            <div class="key">ETH Amount</div>
+            <div class="value">{{ ethAmount }}</div>
+        </div>
+        <div class="key-value">
+            <div class="key">Data</div>
+            <div class="value">{{ buyTokenData }}</div>
+        </div>
+
+
     </div>
 
     <div id="confirm-data" ng-show="displayConfirmData">
