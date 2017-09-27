@@ -149,6 +149,18 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.refund = function (details) {
+        ico.refund(details, function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            console.log("Refund txId", response);
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the withdraw was successful.");
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
@@ -528,6 +540,26 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function refund(details, next) {
+            if (!details.userAddress) {
+                return next({message: "details.userAddress is required."});
+            }
+            if (!details.ethAmount) {
+                return next({message: "details.ethAmount is required."});
+            }
+            if (!details.tokenAmount) {
+                return next({message: "details.tokenAmount is required."});
+            }
+
+
+            var wei = web3.toWei(details.ethAmount, "ether");
+            var tokens = web3.toWei(details.tokenAmount, "ether");
+
+            ico.refund.sendTransaction(details.userAddress, wei, tokens, function (err, result) {
+                next(err, result);
+            });
+        }
+
         var filter = web3.eth.filter("latest");
         filter.watch(function (data) {
             console.log(data);
@@ -636,6 +668,7 @@ app.config(function ($routeProvider, $locationProvider) {
             name: name,
             paused: paused,
             symbol: symbol,
+            refund: refund,
             tokensSold: tokensSold,
             tokensRemaining: tokensRemaining,
             ethBalance: ethBalance,

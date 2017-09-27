@@ -131,6 +131,26 @@
             });
         }
 
+        function refund(details, next) {
+            if (!details.userAddress) {
+                return next({message: "details.userAddress is required."});
+            }
+            if (!details.ethAmount) {
+                return next({message: "details.ethAmount is required."});
+            }
+            if (!details.tokenAmount) {
+                return next({message: "details.tokenAmount is required."});
+            }
+
+
+            var wei = web3.toWei(details.ethAmount, "ether");
+            var tokens = web3.toWei(details.tokenAmount, "ether");
+
+            ico.refund.sendTransaction(details.userAddress, wei, tokens, function (err, result) {
+                next(err, result);
+            });
+        }
+
         var filter = web3.eth.filter("latest");
         filter.watch(function (data) {
             console.log(data);
@@ -239,6 +259,7 @@
             name: name,
             paused: paused,
             symbol: symbol,
+            refund: refund,
             tokensSold: tokensSold,
             tokensRemaining: tokensRemaining,
             ethBalance: ethBalance,

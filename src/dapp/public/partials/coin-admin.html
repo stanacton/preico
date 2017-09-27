@@ -87,5 +87,24 @@
         </p>
 
     </div>
+    
+    <div class="row admin-action">
+        <h3>Refund User</h3>
+        <p>This will refund the user the specified number of tokens and ETH.  This will not refund the users whole allocation unless you specify their whole amount.</p>
+        <div class="form-group">
+            <label for="userAddress">User Address</label>
+            <input class="form-control" type="text" id="userAddress" ng-model="refundItem.userAddress" placeholder="User Address e.g. 0xac89b7s..."/>
+        </div>
+        <div class="form-group">
+            <label for="tokenAmount">Token Amount</label>
+            <input class="form-control" type="number" id="tokenAmount" ng-model="refundItem.tokenAmount" placeholder="Token Amount"/>
+        </div>
+        <div class="form-group">
+            <label for="ethAmount">ETH Amount</label>
+            <input class="form-control" type="text" id="ethAmount" ng-model="refundItem.ethAmount" placeholder="ETH Amount"/>
+        </div>
+
+        <button class="btn btn-primary" ng-click="refund(refundItem)">Refund</button>
+    </div>
 
 </div>

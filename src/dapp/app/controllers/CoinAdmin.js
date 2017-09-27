@@ -126,6 +126,18 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.refund = function (details) {
+        ico.refund(details, function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            console.log("Refund txId", response);
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the withdraw was successful.");
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
