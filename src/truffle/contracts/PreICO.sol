@@ -67,5 +67,24 @@ contract PreICO is PausableToken {
         uint amount = ethBalance;
         ethBalance = 0;
         require(msg.sender.send(amount));
+        return true;
+    }
+
+    function deposit() onlyOwner payable returns (bool) {
+        ethBalance += msg.value;
+    }
+
+    function refund(address refundAccount, uint amount, uint tokens) onlyOwner payable returns (bool) {
+        require(refundAccount != address(0));
+        require(this.balance >= amount);
+        require(balances[refundAccount] >= tokens);
+
+        balances[refundAccount] -= tokens;
+        balances[owner] += tokens;
+
+        ethBalance -= amount;
+        require(refundAccount.send(amount));
+
+        return true;
     }
 }

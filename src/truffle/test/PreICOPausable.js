@@ -327,4 +327,3 @@ function toWei(value) {
 function fromWei(value) {
     return web3.fromWei(value, "ether");
 }
-

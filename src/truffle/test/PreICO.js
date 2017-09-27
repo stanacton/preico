@@ -650,8 +650,48 @@ contract("PreICO", function(accounts) {
                 var contractDiff = contractBalanceAfter.minus(contractBalanceBefore);
 
                 assert.equal(ethBalanceAfter, 0, "ethBalance should have been 0");
-//                 assert.equal(fromWei(ownerDiff).valueOf(), 0 - fromWei(amount), "Contract blanace is wrong");
             });
+        });
+    });
+
+    describe("refund", function() {
+        var user = accounts[7];
+        var owner = accounts[0];
+
+        it("should return the refund to the correct person", async function() {
+            var ico = await PreICO.deployed();
+            var wei = toWei(3);
+            var tokens = toWei(4);
+
+            await ico.setPrice(toWei(0.5), { from: owner });
+            await ico.buyTokens.sendTransaction({ from: user, value: wei });
+            await ico.deposit({ value: wei, from: owner });
+
+            var before = await balances();
+            await ico.refund.sendTransaction(user, wei, tokens, { from: owner });
+            var after = await balances();
+            
+            var ownerDiff = after.ownerTokenBalance.minus(before.ownerTokenBalance);
+            var userDiff = after.userTokenBalance.minus(before.userTokenBalance);
+            
+            var contractEthDiff = after.contractETH.minus(before.contractETH);
+            var userEthDiff = after.customerETH.minus(before.customerETH);
+
+            assert.equal(fromWei(ownerDiff).valueOf(), 4, "Owner token balance didn't go up");
+            assert.equal(fromWei(userDiff).valueOf(), -4, "User token balance didn't go down");
+
+            // assert.equal(ownerDiff.valueOf(), wei, "The ower difference was wrong");
+            assert.equal(fromWei(userEthDiff).valueOf(), fromWei(wei), "The user ETH difference was wrong");
+            assert.equal(fromWei(contractEthDiff).valueOf(), 0-fromWei(wei), "The contract ETH difference was wrong");
+
+            async function balances() {
+                var balances = {};
+                balances.contractETH = await web3.eth.getBalance(ico.address);
+                balances.customerETH = await web3.eth.getBalance(user);
+                balances.userTokenBalance = await ico.balanceOf(user);
+                balances.ownerTokenBalance = await ico.balanceOf(owner);
+                return balances;
+            }
         });
     });
 });
