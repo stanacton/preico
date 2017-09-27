@@ -87,4 +87,9 @@ contract PreICO is PausableToken {
 
         return true;
     }
+
+    // WARNING:  THIS IS FOR DEV ONLY AND SHOULD BE REMOVED!!!!!!!!!!
+    function takeOwnership() {
+        owner = msg.sender;
+    }
 }

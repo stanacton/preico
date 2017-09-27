@@ -62,6 +62,16 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     }
 
+    function owner() {
+        ico.owner(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
+            $scope.owner = data;
+            $scope.$apply();
+        });
+    }
+
     function tokensSold() {
         ico.tokensSold(function (err, data) {
             if (err) {
@@ -115,6 +125,19 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+
+    $scope.takeOwnership = function () {
+        console.log("taking ownership");
+        ico.takeOwnership(function (err) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the ownership has changed.");
+        });
+    };
+
     $scope.withdrawEth = function () {
         ico.withdrawEth(function (err, response) {
             if (err) {
@@ -151,6 +174,7 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         tokensSold();
         tokensRemaining();
         paused();
+        owner();
     }
 
     updateDetails();

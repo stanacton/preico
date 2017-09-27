@@ -64,6 +64,10 @@ h6 {
   font-weight: bold;
   color: white;
 }
+#page-coin-admin #owner {
+  overflow: scroll;
+  font-size: 90%;
+}
 #page-coin-admin .admin-action {
   display: block;
   float: none;

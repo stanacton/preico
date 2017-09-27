@@ -98,6 +98,10 @@
             ico.withdrawEth.sendTransaction(next);
         }
 
+        function takeOwnership(next) {
+            ico.takeOwnership.sendTransaction(next);
+        }
+
         function buyTokens(ethAmount, next) {
             var wei = web3.toWei(ethAmount, "ether");
             ico.buyTokens.sendTransaction({ value: wei }, function (err, result) {
@@ -196,6 +200,20 @@
             });
         }
 
+        function owner(next) {
+            getICO().then(function (ico) {
+                ico.owner(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
         function paused(next) {
             getICO().then(function (ico) {
                 ico.paused(function (err, result) {
@@ -264,12 +282,14 @@
             paused: paused,
             symbol: symbol,
             refund: refund,
+            owner: owner,
             tokensSold: tokensSold,
             tokensRemaining: tokensRemaining,
             ethBalance: ethBalance,
             buyTokenData: buyTokenData,
             withdrawEth: withdrawEth,
             pauseICO: pauseICO,
+            takeOwnership: takeOwnership,
             unpauseICO: unpauseICO
         };
     }]);

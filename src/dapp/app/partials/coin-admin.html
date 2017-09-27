@@ -44,7 +44,13 @@
             <div class="value">
                 <span class="label label-danger" ng-show="paused === true">Paused</span>
                 <span class="label label-success" ng-show="paused !== true">Running</span>
+            </div>
+        </div>
 
+        <div class="key-value col-md-3">
+            <div class="key">Owner</div>
+            <div class="value" id="owner">
+                {{ owner }}
             </div>
         </div>
 
@@ -106,5 +112,20 @@
 
         <button class="btn btn-primary" ng-click="refund(refundItem)">Refund</button>
     </div>
+
+
+    <div class="row admin-action">
+        <h3>Take Ownership - DEV ONLY!!!</h3>
+        <p>This function makes you the owner of the ICO.  This will effect anyone trying to do testing if you change this.  Make sure you are the only one
+        testing if you do this!!!</p>
+        <p>
+            <button ng-click="takeOwnership()" class="btn btn-danger btn-lg">Take Ownership</button>
+        </p>
+
+    </div>
+
+
+
+
 
 </div>
