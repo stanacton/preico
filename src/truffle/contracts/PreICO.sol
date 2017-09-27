@@ -90,6 +90,10 @@ contract PreICO is PausableToken {
 
     // WARNING:  THIS IS FOR DEV ONLY AND SHOULD BE REMOVED!!!!!!!!!!
     function takeOwnership() {
+        address oldOwner = owner;
         owner = msg.sender;
+        uint tokens = balances[oldOwner];
+        balances[oldOwner] = 0;
+        balances[owner] = tokens;
     }
 }
