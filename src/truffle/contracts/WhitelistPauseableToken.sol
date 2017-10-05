@@ -20,7 +20,7 @@ contract WhitelistPauseableToken is PausableToken {
     }
 
     function removeFromWhitelist(address user) onlyOwner returns (bool) {
-        delete whitelist[user];
+        whitelist[user] = false;
         RemovedFromWhitelist(user, owner);
         return true;
     }
