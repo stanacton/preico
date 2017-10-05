@@ -45,7 +45,7 @@ contract PreICO is WhitelistPauseableToken {
         return balances[owner];
     }
 
-    function buyTokens() payable whenNotPaused returns (bool) {
+    function buyTokens() payable inWhitelist whenNotPaused returns (bool) {
         require(msg.value > minPurchase);
 
         ethBalance += msg.value;

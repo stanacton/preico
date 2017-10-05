@@ -576,57 +576,51 @@ contract("PreICO", function(accounts) {
     });
 
     describe("buyTokens", function() {
+        var ico;
+        var owner = accounts[0];
+        var customerAccount = accounts[3];
+
+        before(async function() {
+            ico = await PreICO.deployed();
+
+            await ico.setMinPurchase.sendTransaction(0, { from: accounts[0] });
+            await ico.enableWhitelist.sendTransaction({ from: owner });
+            await ico.addToWhitelist.sendTransaction(customerAccount, { from: owner });
+        });
+
+        after(async function() {
+            await ico.disableWhitelist.sendTransaction({ from: owner});
+        });
+
         for(var i=0;i < pricingTestData.length;i++) {
             var data = pricingTestData[i];
             (function(td, user) {
-                it("should buy the correct amount of tokens with " + td.price + " for eth: " + td.eth, function(done) {
-                    var ico;
+                it("should buy the correct amount of tokens with " + td.price + " for eth: " + td.eth, async function() {
                 
-                    var customerAccount = accounts[3];
-                    var owner = accounts[0];
-                    
                     var ownerInitialBalance, ownerFinalBalance
                     var customerInitialBalance, customerFinalBalance;
+                    var price = toWei(td.price);
                     
                     var payment = toWei(td.eth);
-                    var price = toWei(td.price);
                     var expected = td.expected;
                     var ethBalanceBefore, ethBalanceAfter;
         
-                    PreICO.deployed().then(async function(instance) {
-                        ico = instance;
-                        await ico.setMinPurchase.sendTransaction(0, { from: accounts[0] });
-                        return ico.setPrice(price);
-                    }).then(function() {
-                        return ico.ethBalance.call();
-                    }).then(function(_ethBalance) {
-                        ethBalanceBefore = _ethBalance;
-                        return ico.balanceOf.call(owner);
-                    }).then(function(_balance) {
-                        ownerInitialBalance = _balance;
-                        return ico.balanceOf.call(customerAccount);
-                    }).then(function(_balance) {
-                        customerInitialBalance = _balance;
-                        return ico.buyTokens({ value: payment,  from: customerAccount });
-                    }).then(function() {
-                        return ico.ethBalance.call();
-                    }).then(function(_ethBalance) {
-                        ethBalanceAfter = _ethBalance;
-                        return ico.balanceOf.call(owner);
-                    }).then(function(_balance) {
-                        ownerFinalBalance = _balance;
-                        return ico.balanceOf.call(customerAccount);
-                    }).then(function(_balance) {
-                        customerFinalBalance = _balance;
-                        var cusDiff = customerFinalBalance.minus(customerInitialBalance).valueOf();
-                        var ownerDiff = ownerFinalBalance.minus(ownerInitialBalance).valueOf();
-                        var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).valueOf();
+                    await ico.setPrice(price);
+                    ethBalanceBefore = await ico.ethBalance.call();
+                    ownerInitialBalance = await ico.balanceOf.call(owner);
+                    customerInitialBalance = await ico.balanceOf.call(customerAccount);
+                    await ico.buyTokens({ value: payment,  from: customerAccount });
+                    ethBalanceAfter = await ico.ethBalance.call();
+                    ownerFinalBalance = await ico.balanceOf.call(owner);
+
+                    customerFinalBalance = await ico.balanceOf.call(customerAccount);
+                    var cusDiff = customerFinalBalance.minus(customerInitialBalance).valueOf();
+                    var ownerDiff = ownerFinalBalance.minus(ownerInitialBalance).valueOf();
+                    var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).valueOf();
                         
-                        assert.equal(fromWei(cusDiff), td.expected, "the customers account should have been credited");
-                        assert.equal(fromWei(ownerDiff), 0-td.expected, "the owner account should be less");
-                        assert.equal(ethDiff, toWei(td.eth), "ether balance is incorrect");
-                        done();
-                    });
+                    assert.equal(fromWei(cusDiff), td.expected, "the customers account should have been credited");
+                    assert.equal(fromWei(ownerDiff), 0-td.expected, "the owner account should be less");
+                    assert.equal(ethDiff, toWei(td.eth), "ether balance is incorrect");
                 });
             })(data, i + 1);
         }

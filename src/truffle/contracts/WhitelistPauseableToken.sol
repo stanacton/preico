@@ -6,6 +6,10 @@ contract WhitelistPauseableToken is PausableToken {
     mapping(address => bool) public whitelist;
     bool public whitelistEnabled;
 
+    function WhitelistPauseableToken() {
+      whitelistEnabled = false;
+    }
+
     event AddedToWhitelist(address indexed user, address indexed owner);
     event RemovedFromWhitelist(address indexed user, address indexed owner);
 
