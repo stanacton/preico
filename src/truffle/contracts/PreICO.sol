@@ -2,8 +2,9 @@ pragma solidity ^0.4.11;
 
 import "./zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./zeppelin-solidity/contracts/token/PausableToken.sol";
+import "./WhitelistPauseableToken.sol";
 
-contract PreICO is PausableToken {
+contract PreICO is WhitelistPauseableToken {
     address public owner;
     string public constant name = "BB Token";
     string public constant symbol = "BBTOK";

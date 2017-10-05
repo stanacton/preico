@@ -2,7 +2,6 @@
 var PreICO = artifacts.require("../contracts/PreICO.sol");
 
 contract("PreICO", function(accounts) {
-    
     it("should compile and deploy!!", function(){
         var ownerBalance = 0;
         var owner;
@@ -29,8 +28,7 @@ contract("PreICO", function(accounts) {
         });
     });
 
-    describe("transfer", function() {
-
+    describe("transfer", function() { 
         it("should transfer and debit the accounts correctly", function() {
             var ownerBalance, ico;
             var account_from = accounts[0];
