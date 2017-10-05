@@ -155,14 +155,29 @@ contract("PreICO", function(accounts) {
     });
  
     describe("transferFrom", function() {
+        var ico;
+        var actor = accounts[3];
+        var account_from = accounts[2];
+
+        before(async function() {
+            ico = await PreICO.deployed();
+            await ico.enableWhitelist();
+            await ico.addToWhitelist(account_from);
+            await ico.addToWhitelist(actor);
+        });
+
+        after(async function() {
+            await ico.disableWhitelist();
+            await ico.removeFromWhitelist(account_from);
+            await ico.removeFromWhitelist(actor);
+        });
+
         it("should trasfer to the correct account from the correct account in the correct amount", function() {
             var ownerBalance, ico;
-            var account_from = accounts[0];
             var account_to = accounts[1];
             var to_balance_before, to_balance_after;
             var from_balance_before, from_balance_after;
             var result = undefined;
-            var actor = accounts[3];
             var amountToTransfer = toWei(5);
             var allowanceLeft;
             var watcher, events;
