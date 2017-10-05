@@ -520,6 +520,24 @@ contract("PreICO", function(accounts) {
                 assert.equal(fromWei(ethDiff), eth, "ether balance is incorrect");
             });
         }); 
+
+        it("should fail when the ether is below the minimum purchase amount", async function() {
+            var ico = await PreICO.deployed();
+
+            await ico.setMinPurchase.sendTransaction(toWei(3), { from: accounts[0]});
+            var error =false;
+
+            try {
+                await ico.buyTokens({ from: accounts[2], value: toWei(2)});
+            } catch (e) {
+                error = true;
+            }
+
+            assert.isTrue(error, "An exception should have been thrown.");
+
+            //revert 
+            await ico.setMinPurchase.sendTransaction(0, { from: accounts[0]});
+        });
     });
 
     var pricingTestData = [];
@@ -577,9 +595,9 @@ contract("PreICO", function(accounts) {
                     var expected = td.expected;
                     var ethBalanceBefore, ethBalanceAfter;
         
-                    PreICO.deployed().then(function(instance) {
+                    PreICO.deployed().then(async function(instance) {
                         ico = instance;
-
+                        await ico.setMinPurchase.sendTransaction(0, { from: accounts[0] });
                         return ico.setPrice(price);
                     }).then(function() {
                         return ico.ethBalance.call();
@@ -723,7 +741,46 @@ contract("PreICO", function(accounts) {
             balances.userTokenBalance = await ico.balanceOf(user);
             balances.ownerTokenBalance = await ico.balanceOf(owner);
             return balances;
-        }    });
+        }    
+    });
+
+
+   describe("setMinPurchase", function() {
+    it("should set the min purchase when requested", async function() {
+        var owner = accounts[0];
+        var minPurchase = toWei(22);
+
+        var ico = await PreICO.deployed();
+        var result = await ico.setMinPurchase(minPurchase, { from: owner });
+        var minAfter = await ico.minPurchase();
+
+        assert.equal(fromWei(minAfter).valueOf(), 22);
+
+        // teardown the test conditions
+        await ico.setMinPurchase(0, { from: owner });
+    });
+
+    it("should fail when it's not the owner", async function() {
+        var notOwner = accounts[2];
+        var minPurchase = toWei(22);
+
+        var ico = await PreICO.deployed();
+        var minBefore = await ico.minPurchase();
+
+        var error = false;
+        try {
+            var result = await ico.setMinPurchase(minPurchase, { from: notOwner });
+        } catch (e) {
+            error = true;
+        }
+        assert.isTrue(error, "Function should have thrown an exception");
+       
+        var minAfter = await ico.minPurchase();
+        assert.equal(minBefore.valueOf(), minAfter.valueOf());
+    });
+});
+
+
 });
 
 function toWei(value) {

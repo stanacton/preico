@@ -10,6 +10,7 @@ contract PreICO is PausableToken {
     uint8 public constant decimals = 18;
   
     uint256 public constant INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals));
+    uint256 public minPurchase;
     uint _price;
 
     function PreICO() {
@@ -44,6 +45,8 @@ contract PreICO is PausableToken {
     }
 
     function buyTokens() payable whenNotPaused returns (bool) {
+        require(msg.value > minPurchase);
+
         ethBalance += msg.value;
         uint tokens = this.calculatTokens(msg.value);
         if (balances[owner] >= tokens && tokens > 0 && balances[msg.sender] + tokens > balances[msg.sender]) { 
@@ -88,12 +91,8 @@ contract PreICO is PausableToken {
         return true;
     }
 
-    // WARNING:  THIS IS FOR DEV ONLY AND SHOULD BE REMOVED!!!!!!!!!!
-    function takeOwnership() {
-        address oldOwner = owner;
-        owner = msg.sender;
-        uint tokens = balances[oldOwner];
-        balances[oldOwner] = 0;
-        balances[owner] = tokens;
+    function setMinPurchase(uint256 minAmount) onlyOwner returns (bool) {
+        minPurchase = minAmount;
+        return true;
     }
 }
