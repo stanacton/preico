@@ -411,10 +411,23 @@ contract("PreICO", function(accounts) {
     });
 
     describe("approve & allowance", function() {
+        var ico;
+        var spender = accounts[5];
+        var owner = accounts[0];
+
+        before(async function() {
+            ico = await PreICO.deployed();
+            await ico.enableWhitelist();
+            await ico.addToWhitelist(spender);
+        });
+
+        after(async function() {
+            await ico.disableWhitelist();
+            await ico.removeFromWhitelist(spender);
+        });
+
         it("should show the correct allowance when requested", function() {
             var ownerBalance, ico;
-            var spender = accounts[5];
-            var owner = accounts[0];
             var spendAmount = 10;
             var allowanceBeforeAllocation;
             var allowanceAfterAllocation;
@@ -446,10 +459,23 @@ contract("PreICO", function(accounts) {
     });
 
     describe("buyTokens", function() {
+        var ico;
+        var customerAccount = accounts[6];
+        var owner = accounts[0];
+
+        before(async function() {
+            ico = await PreICO.deployed();
+            await ico.enableWhitelist();
+            await ico.addToWhitelist(customerAccount);
+        });
+
+        after(async function() {
+            await ico.disableWhitelist();
+            await ico.removeFromWhitelist(customerAccount);
+        });
+
         it("should calculate and allocate the correct tokens", function() {
             var ownerBalance, ico;
-            var customerAccount = accounts[6];
-            var owner = accounts[0];
             
             var initialOwnerBalance, finalOwnerBalance;
             var initialCusBalance, finalCusBalance;
@@ -762,9 +788,8 @@ contract("PreICO", function(accounts) {
         }    
     });
 
-
-   describe("setMinPurchase", function() {
-    it("should set the min purchase when requested", async function() {
+    describe("setMinPurchase", function() {
+     it("should set the min purchase when requested", async function() {
         var owner = accounts[0];
         var minPurchase = toWei(22);
 
