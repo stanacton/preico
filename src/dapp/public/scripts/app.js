@@ -95,6 +95,16 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     }
 
+    function minPurchase() {
+        ico.minPurchase(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
+            $scope.minPurchase = data;
+            $scope.$apply();
+        });
+    }
+
     function tokensSold() {
         ico.tokensSold(function (err, data) {
             if (err) {
@@ -148,7 +158,6 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
-
     $scope.takeOwnership = function () {
         console.log("taking ownership");
         ico.takeOwnership(function (err) {
@@ -158,6 +167,18 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
             }
 
             alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the ownership has changed.");
+        });
+    };
+
+    $scope.setMinPurchase = function (amount) {
+        console.log("setMinPurchase");
+        ico.setMinPurchase(amount, function (err) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the minPurchase amount has changed.");
         });
     };
 
@@ -198,6 +219,7 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         tokensRemaining();
         paused();
         owner();
+        minPurchase();
     }
 
     updateDetails();
@@ -545,7 +567,6 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
-
         function pauseICO(next) {
             ico.pause.sendTransaction(next);
         }
@@ -571,6 +592,13 @@ app.config(function ($routeProvider, $locationProvider) {
         function setPrice(price, next) {
             var wei = web3.toWei(price, "ether");
             ico.setPrice.sendTransaction(wei, { gas: 30000 }, function (err, result) {
+                next(err, result);
+            });
+        }
+
+        function setMinPurchase(price, next) {
+            var wei = web3.toWei(price, "ether");
+            ico.setMinPurchase.sendTransaction(wei, function (err, result) {
                 next(err, result);
             });
         }
@@ -692,6 +720,20 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function minPurchase(next) {
+            getICO().then(function (ico) {
+                ico.minPurchase(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result.toNumber(), "ether"));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
         function tokensRemaining(next) {
             getICO().then(function (ico) {
                 ico.tokensRemaining(function (err, result) {
@@ -713,11 +755,13 @@ app.config(function ($routeProvider, $locationProvider) {
             pricePerETH: pricePerETH,
             buyTokens: buyTokens,
             setPrice: setPrice,
+            setMinPurchase: setMinPurchase,
             totalSupply: totalSupply,
             name: name,
             paused: paused,
             symbol: symbol,
             refund: refund,
+            minPurchase: minPurchase,
             owner: owner,
             tokensSold: tokensSold,
             tokensRemaining: tokensRemaining,

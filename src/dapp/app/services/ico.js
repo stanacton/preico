@@ -109,7 +109,6 @@
             });
         }
 
-
         function pauseICO(next) {
             ico.pause.sendTransaction(next);
         }
@@ -135,6 +134,13 @@
         function setPrice(price, next) {
             var wei = web3.toWei(price, "ether");
             ico.setPrice.sendTransaction(wei, { gas: 30000 }, function (err, result) {
+                next(err, result);
+            });
+        }
+
+        function setMinPurchase(price, next) {
+            var wei = web3.toWei(price, "ether");
+            ico.setMinPurchase.sendTransaction(wei, function (err, result) {
                 next(err, result);
             });
         }
@@ -256,6 +262,20 @@
             });
         }
 
+        function minPurchase(next) {
+            getICO().then(function (ico) {
+                ico.minPurchase(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result.toNumber(), "ether"));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
         function tokensRemaining(next) {
             getICO().then(function (ico) {
                 ico.tokensRemaining(function (err, result) {
@@ -277,11 +297,13 @@
             pricePerETH: pricePerETH,
             buyTokens: buyTokens,
             setPrice: setPrice,
+            setMinPurchase: setMinPurchase,
             totalSupply: totalSupply,
             name: name,
             paused: paused,
             symbol: symbol,
             refund: refund,
+            minPurchase: minPurchase,
             owner: owner,
             tokensSold: tokensSold,
             tokensRemaining: tokensRemaining,

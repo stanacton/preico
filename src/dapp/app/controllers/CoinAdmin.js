@@ -72,6 +72,16 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     }
 
+    function minPurchase() {
+        ico.minPurchase(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
+            $scope.minPurchase = data;
+            $scope.$apply();
+        });
+    }
+
     function tokensSold() {
         ico.tokensSold(function (err, data) {
             if (err) {
@@ -125,7 +135,6 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
-
     $scope.takeOwnership = function () {
         console.log("taking ownership");
         ico.takeOwnership(function (err) {
@@ -135,6 +144,18 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
             }
 
             alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the ownership has changed.");
+        });
+    };
+
+    $scope.setMinPurchase = function (amount) {
+        console.log("setMinPurchase");
+        ico.setMinPurchase(amount, function (err) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the minPurchase amount has changed.");
         });
     };
 
@@ -175,6 +196,7 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         tokensRemaining();
         paused();
         owner();
+        minPurchase();
     }
 
     updateDetails();

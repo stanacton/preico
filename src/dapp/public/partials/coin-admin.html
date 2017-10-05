@@ -40,6 +40,11 @@
         </div>
 
         <div class="key-value col-md-3">
+            <div class="key">Minimum Purhcase</div>
+            <div class="value">{{ minPurchase }} ETH</div>
+        </div>
+
+        <div class="key-value col-md-3">
             <div class="key">Paused / Running</div>
             <div class="value">
                 <span class="label label-danger" ng-show="paused === true">Paused</span>
@@ -66,6 +71,15 @@
     </div>
 
     <div class="row admin-action">
+        <h3>Set Minimum Purchase Amount</h3>
+        <div class="form-group">
+            <label for="minAmount">Min. Purchase in ETH</label>
+            <input class="form-control" type="number" id="minAmount" ng-model="newMinAmount" placeholder="Min. in ETH"/>
+        </div>
+        <button class="btn btn-primary" ng-click="setMinPurchase(newMinAmount)">Set Minimum</button>
+    </div>
+
+    <div class="row admin-action">
         <h3>Pause ICO <span class="label label-danger" ng-show="paused === true">Paused!!</span>  <span class="label label-success" ng-show="paused === false">Running</span> </h3>
         <p>Pausing the ICO stops any user from calling the following: </p>
         <ul>
@@ -79,9 +93,7 @@
         <p>
             <button ng-click="pause()" class="btn btn-danger btn-lg" ng-show="paused !== true">Pause ICO</button>
             <button ng-click="unpause()" class="btn btn-primary btn-lg" ng-show="paused === true">Unpause ICO</button>
-
         </p>
-
     </div>
 
     <div class="row admin-action">
@@ -91,7 +103,6 @@
         <p>
             <button ng-click="withdrawEth()" class="btn btn-danger btn-lg">Withdraw ETH from ICO</button>
         </p>
-
     </div>
     
     <div class="row admin-action">
@@ -113,7 +124,6 @@
         <button class="btn btn-primary" ng-click="refund(refundItem)">Refund</button>
     </div>
 
-
     <div class="row admin-action">
         <h3>Take Ownership - DEV ONLY!!!</h3>
         <p>This function makes you the owner of the ICO.  This will effect anyone trying to do testing if you change this.  Make sure you are the only one
@@ -123,9 +133,4 @@
         </p>
 
     </div>
-
-
-
-
-
 </div>
