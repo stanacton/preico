@@ -29,17 +29,32 @@ contract("PreICO", function(accounts) {
     });
 
     describe("transfer", function() { 
+        var ico;
+        var owner = accounts[0];
+        var account_from = accounts[0];
+        var account_to = accounts[3];
+
+        before(async function() {
+            ico = await PreICO.deployed();
+
+            await ico.setMinPurchase.sendTransaction(0, { from: accounts[0] });
+            await ico.enableWhitelist.sendTransaction({ from: owner });
+            await ico.addToWhitelist.sendTransaction(account_from, { from: owner });
+        });
+
+        after(async function() {
+            await ico.disableWhitelist.sendTransaction({ from: owner});
+        });
+
         it("should transfer and debit the accounts correctly", function() {
-            var ownerBalance, ico;
-            var account_from = accounts[0];
-            var account_to = accounts[1];
+            var ownerBalance;
             var result;
             var watcher, events;
             var transferAmount = toWei(100);
     
             return PreICO.deployed().then(function(instance) {
                 ico = instance;
-                return ico.Transfer();
+                return ico.Transfer()
             }).then(function(_watcher) {
                 watcher = _watcher;
                 return ico.transfer(account_to, transferAmount, {from: account_from});
@@ -65,8 +80,6 @@ contract("PreICO", function(accounts) {
    
         it("transfer should fail if the sender doesn't have enough funds", function() {
             var ownerBalance, ico;
-            var account_from = accounts[0];
-            var account_to = accounts[1];
             var to_balance_before, to_balance_after;
             var from_balance_before, from_balance_after;
             var result;
@@ -104,8 +117,6 @@ contract("PreICO", function(accounts) {
      
         it("transfer should fail if the amount <= 0", function() {
             var ownerBalance, ico;
-            var account_from = accounts[0];
-            var account_to = accounts[1];
             var to_balance_before, to_balance_after;
             var from_balance_before, from_balance_after;
             var result = undefined;
