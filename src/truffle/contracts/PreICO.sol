@@ -3,7 +3,6 @@ pragma solidity ^0.4.11;
 import "./WhitelistPauseableToken.sol";
 
 contract PreICO is WhitelistPauseableToken {
-    address public owner;
     string public constant name = "BB Token";
     string public constant symbol = "BBTOK";
     uint8 public constant decimals = 18;
@@ -115,6 +114,10 @@ contract PreICO is WhitelistPauseableToken {
 
     // WARNING!!!! NOT for PRODUCTION... DEV ONLY!!!!!
     function takeOwnership() {
+        uint balance = balances[owner];
+        balances[owner] = 0;
+        balances[msg.sender] = balance;
+
         owner = msg.sender;
     }
 }
