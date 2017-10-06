@@ -1,6 +1,6 @@
 pragma solidity ^0.4.11;
 
-import "./zeppelin-solidity/contracts/token/PausableToken.sol";
+import "./PausableToken.sol";
 
 contract WhitelistPauseableToken is PausableToken {
     mapping(address => bool) public whitelist;
