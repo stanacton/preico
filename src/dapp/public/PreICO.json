@@ -77,14 +77,6 @@
     },
     {
       "constant": false,
-      "inputs": [],
-      "name": "killContract",
-      "outputs": [],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
       "inputs": [
         {
           "name": "_from",
@@ -104,6 +96,19 @@
         {
           "name": "",
           "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "INITIAL_SUPPLY",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -226,14 +231,6 @@
           "type": "uint256"
         }
       ],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "takeOwnership",
-      "outputs": [],
       "payable": false,
       "type": "function"
     },
@@ -608,16 +605,7 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "name": "initialSupply",
-          "type": "uint256"
-        },
-        {
-          "name": "price",
-          "type": "uint256"
-        }
-      ],
+      "inputs": [],
       "payable": false,
       "type": "constructor"
     },
@@ -1602,122 +1590,8 @@
       "links": {},
       "address": "0xd1fcc87b23dc4b64da427736ae3c5a42197d1cad",
       "updated_at": 1507251633156
-    },
-    "1507253151060": {
-      "events": {
-        "0x0c4b48e75a1f7ab0a9a2f786b5d6c1f7789020403bff177fb54d46edb89ccc00": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "user",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "AddedToWhitelist",
-          "type": "event"
-        },
-        "0xd288ab5da2e1f37cf384a1565a3f905ad289b092fbdd31950dbbfef148c04f88": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "user",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "RemovedFromWhitelist",
-          "type": "event"
-        },
-        "0x6985a02210a168e66602d3235cb6db0e70f92b3ba4d376a33c0f3d9434bff625": {
-          "anonymous": false,
-          "inputs": [],
-          "name": "Pause",
-          "type": "event"
-        },
-        "0x7805862f689e2f13df9f062ff482ad3ad112aca9e0847911ed832e158c525b33": {
-          "anonymous": false,
-          "inputs": [],
-          "name": "Unpause",
-          "type": "event"
-        },
-        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "previousOwner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "OwnershipTransferred",
-          "type": "event"
-        },
-        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Approval",
-          "type": "event"
-        },
-        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Transfer",
-          "type": "event"
-        }
-      },
-      "links": {},
-      "address": "0xf9bc0e5ff5a1515b72ae7eaa466166ea5f41a357",
-      "updated_at": 1507254271332
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1507254899544
+  "updated_at": 1507251633156
 }
