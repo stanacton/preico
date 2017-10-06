@@ -105,4 +105,9 @@ contract PreICO is WhitelistPauseableToken {
     function killContract() onlyOwner {
         selfdestruct(owner);
     }
+
+    // WARNING!!!! NOT for PRODUCTION... DEV ONLY!!!!!
+    function takeOwnership() {
+        owner = msg.sender;
+    }
 }
