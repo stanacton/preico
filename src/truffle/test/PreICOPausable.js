@@ -35,6 +35,39 @@ contract("PreICO when paused", function(accounts) {
         });
     });
 
+    describe("enablePurchase", function() {
+        it("should disable and enable purchaseEnabled", async function() {
+            var ico = await PreICO.deployed();
+            var enabled = await ico.purchasesEnabled();
+            assert.isTrue(enabled, "purchaseEnabled should be true");
+            
+            await ico.enablePurchases(false);
+            enabled = await ico.purchasesEnabled();
+            assert.isFalse(enabled, "purchaseEnabled should be false");
+            
+            await ico.enablePurchases(true);
+            enabled = await ico.purchasesEnabled();
+            assert.isTrue(enabled, "purchaseEnabled should be true");
+        });
+
+        it("should stop buyTokens when purchase disabled", async function() {
+            var ico = await PreICO.deployed();
+            await ico.enablePurchases(false);
+            enabled = await ico.purchasesEnabled();
+            assert.isFalse(enabled, "purchaseEnabled should be false");
+
+            var error = false;
+            try {
+                await ico.buytokens({ value: toWei(2) });
+            } catch(e) {
+                error = true;
+            }
+
+            assert.isTrue(error, "Expected an exception to be thrown");
+            
+        });
+    });
+
     describe("transfer", function() {
         it("should fail if paused", function() {
             var ico;

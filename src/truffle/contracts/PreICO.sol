@@ -9,8 +9,10 @@ contract PreICO is WhitelistPauseableToken {
     uint8 public constant decimals = 18;
   
     uint256 public constant INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals));
+  
     uint256 public minPurchase;
     uint _price;
+    bool public purchasesEnabled;
 
     function PreICO() {
         totalSupply = INITIAL_SUPPLY;
@@ -18,6 +20,8 @@ contract PreICO is WhitelistPauseableToken {
         owner = msg.sender;
         balances[owner] = totalSupply;
         _price = 2000000000000000000;
+
+        purchasesEnabled = true;
     }
 
     function() payable {
@@ -44,6 +48,7 @@ contract PreICO is WhitelistPauseableToken {
     }
 
     function buyTokens() payable inWhitelist whenNotPaused returns (bool) {
+        require(purchasesEnabled);
         require(msg.value > minPurchase);
 
         ethBalance += msg.value;
@@ -57,6 +62,10 @@ contract PreICO is WhitelistPauseableToken {
         } else {
             return false;
         }
+    }
+
+    function enablePurchases(bool enabled) onlyOwner returns (bool) {
+        purchasesEnabled = enabled;
     }
 
     function calculatTokens(uint eth) constant returns (uint) {
