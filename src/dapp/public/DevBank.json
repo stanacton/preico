@@ -55,8 +55,8 @@
     "101010": {
       "events": {},
       "links": {},
-      "address": "0x9cd63dca17b8db75d099bbb8f5d693c0c3eec881",
-      "updated_at": 1506550532843
+      "address": "0x38507842f5602e7e9240a357d80dcf3c0e0be74f",
+      "updated_at": 1507257541957
     },
     "1506459202566": {
       "events": {},
@@ -117,8 +117,14 @@
       "links": {},
       "address": "0xf76aa8bb4615576f5410091f4eb5c09b4d677055",
       "updated_at": 1507254271331
+    },
+    "1507258459251": {
+      "events": {},
+      "links": {},
+      "address": "0x2e1b29b9fed2f02b3919ee2b1e3f1e268b381278",
+      "updated_at": 1507258545116
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1507254271331
+  "updated_at": 1507258545116
 }
