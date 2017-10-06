@@ -47,7 +47,7 @@ contract PreICO is WhitelistPauseableToken {
         return balances[owner];
     }
 
-    function buyTokens() payable inWhitelist whenNotPaused returns (bool) {
+    function buyTokens() payable whenNotPaused returns (bool) {
         require(purchasesEnabled);
         require(msg.value > minPurchase);
 
@@ -102,5 +102,9 @@ contract PreICO is WhitelistPauseableToken {
     function setMinPurchase(uint256 minAmount) onlyOwner returns (bool) {
         minPurchase = minAmount;
         return true;
+    }
+
+    function killContract() onlyOwner {
+        selfdestruct(owner);
     }
 }
