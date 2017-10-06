@@ -8,18 +8,16 @@ contract PreICO is WhitelistPauseableToken {
     string public constant symbol = "BBTOK";
     uint8 public constant decimals = 18;
   
-    uint256 public constant INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals));
-  
     uint256 public minPurchase;
     uint _price;
     bool public purchasesEnabled;
 
-    function PreICO() {
-        totalSupply = INITIAL_SUPPLY;
+    function PreICO(uint256 initialSupply, uint256 price) {
+        totalSupply = initialSupply * (10 ** uint256(decimals));
       
         owner = msg.sender;
         balances[owner] = totalSupply;
-        _price = 2000000000000000000;
+        _price = price;
 
         purchasesEnabled = true;
     }

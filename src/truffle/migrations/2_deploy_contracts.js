@@ -7,7 +7,7 @@ var fs = require("fs");
 module.exports = function(deployer) {
   deployer.deploy(DevBank);
   
-  deployer.deploy(PreICO).then(function(err, result) {
+  deployer.deploy(PreICO, 1000000, web3.toWei(2,"ether")).then(function(err, result) {
     var addressData = {};
     addressData.PreICO = {
       address: PreICO.address
