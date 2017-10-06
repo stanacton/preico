@@ -53,6 +53,14 @@
         </div>
 
         <div class="key-value col-md-3">
+            <div class="key">Purchases Enabled</div>
+            <div class="value">
+                <span class="label label-success" ng-show="purchasesEnabled === true">Enabled</span>
+                <span class="label label-danger" ng-show="purchasesEnabled !== true">Disabled</span>
+            </div>
+        </div>
+
+        <div class="key-value col-md-3">
             <div class="key">Whitelist Status</div>
             <div class="value">
                 <span class="label label-success" ng-show="whitelistEnabled === true">Enabled</span>
@@ -101,6 +109,15 @@
         <p>
             <button ng-click="pause()" class="btn btn-danger btn-lg" ng-show="paused !== true">Pause ICO</button>
             <button ng-click="unpause()" class="btn btn-primary btn-lg" ng-show="paused === true">Unpause ICO</button>
+        </p>
+    </div>
+
+    <div class="row admin-action">
+        <h3>Purchases <span class="label label-success" ng-show="purchasesEnabled === true">Enabled</span>  <span class="label label-danger" ng-show="purchasesEnabled === false">Disabled</span> </h3>
+        <p>Disabling purchases stops people calling buyTokens</p>
+        <p>
+            <button ng-click="enablePurchases(true)" class="btn btn-primary btn-lg" ng-show="purchasesEnabled !== true">Enable Purchases</button>
+            <button ng-click="enablePurchases(false)" class="btn btn-danger btn-lg" ng-show="purchasesEnabled === true">Disable Purchases</button>
         </p>
     </div>
 

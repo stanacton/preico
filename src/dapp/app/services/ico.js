@@ -306,6 +306,18 @@
             });
         }
 
+        function purchasesEnabled(next) {
+            getICO().then(function (ico) {
+                ico.purchasesEnabled(next);
+            });
+        }
+
+        function enablePurchases(enabled, next) {
+            getICO().then(function (ico) {
+                ico.enablePurchases(enabled, next);
+            });
+        }
+
         function minPurchase(next) {
             getICO().then(function (ico) {
                 ico.minPurchase(function (err, result) {
@@ -350,6 +362,8 @@
             checkWhitelistStatus: checkWhitelistStatus,
             paused: paused,
             symbol: symbol,
+            purchasesEnabled: purchasesEnabled,
+            enablePurchases: enablePurchases,
             refund: refund,
             minPurchase: minPurchase,
             owner: owner,

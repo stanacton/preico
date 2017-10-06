@@ -105,6 +105,16 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     }
 
+    function purchasesEnabled() {
+        ico.purchasesEnabled(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
+            $scope.purchasesEnabled = data;
+            $scope.$apply();
+        });
+    }
+
     function tokensSold() {
         ico.tokensSold(function (err, data) {
             if (err) {
@@ -154,6 +164,17 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
             }
 
             alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the pause was successful.");
+        });
+    };
+
+    $scope.enablePurchases = function (enabled) {
+        ico.enablePurchases(enabled, function (err) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if purchases were enabled.");
         });
     };
 
@@ -292,6 +313,7 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         paused();
         owner();
         minPurchase();
+        purchasesEnabled();
         whitelistEnabled();
     }
 
@@ -837,6 +859,18 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function purchasesEnabled(next) {
+            getICO().then(function (ico) {
+                ico.purchasesEnabled(next);
+            });
+        }
+
+        function enablePurchases(enabled, next) {
+            getICO().then(function (ico) {
+                ico.enablePurchases(enabled, next);
+            });
+        }
+
         function minPurchase(next) {
             getICO().then(function (ico) {
                 ico.minPurchase(function (err, result) {
@@ -881,6 +915,8 @@ app.config(function ($routeProvider, $locationProvider) {
             checkWhitelistStatus: checkWhitelistStatus,
             paused: paused,
             symbol: symbol,
+            purchasesEnabled: purchasesEnabled,
+            enablePurchases: enablePurchases,
             refund: refund,
             minPurchase: minPurchase,
             owner: owner,
