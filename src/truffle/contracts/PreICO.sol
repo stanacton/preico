@@ -26,6 +26,13 @@ contract PreICO is WhitelistPauseableToken {
         revert();
     }
 
+    function claimOwnership() onlyPendingOwner public {
+        uint256 ownerBalance = balances[owner];
+        balances[owner] = 0;
+        balances[pendingOwner] = ownerBalance;
+        super.claimOwnership();
+    }
+
     function pricePerETH() constant returns (uint) {
         return _price;
     }
