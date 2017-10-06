@@ -53,6 +53,14 @@
         </div>
 
         <div class="key-value col-md-3">
+            <div class="key">Whitelist Status</div>
+            <div class="value">
+                <span class="label label-success" ng-show="whitelistEnabled === true">Enabled</span>
+                <span class="label label-danger" ng-show="whitelistEnabled !== true">Disabled</span>
+            </div>
+        </div>
+
+        <div class="key-value col-md-3">
             <div class="key">Owner</div>
             <div class="value" id="owner">
                 {{ owner }}
@@ -122,6 +130,46 @@
         </div>
 
         <button class="btn btn-primary" ng-click="refund(refundItem)">Refund</button>
+    </div>
+
+    <div class="row admin-action">
+        <h3>Whitelist
+            <span class="label label-success" ng-show="whitelistEnabled === true">Enabled</span>
+            <span class="label label-danger" ng-show="whitelistEnabled !== true">Disabled</span>
+        </h3>
+        <p>The whitelist can be enabled and disabled.</p>
+        <p>
+            <button class="btn btn-primary btn-lg" ng-show="whitelistEnabled !== true" ng-click="enableWhitelist()">Enable Whitelist</button>
+            <button class="btn btn-danger btn-lg" ng-show="whitelistEnabled === true" ng-click="disableWhitelist()">Disable Whitelist</button>
+        </p>
+
+        <p>When the whitelist is enabled only users on the whitelist will be able to perform the following:</p>
+        <ul>
+            <li>buyTokens</li>
+            <li>approve</li>
+            <li>transfer</li>
+            <li>transferFrom</li>
+            <li>increaseApproval</li>
+            <li>decreaseApproval</li>
+        </ul>
+        <div class="row">
+            <div class="form-group col-lg-9">
+                <label for="whitelistAddress">User Address</label>
+                <input class="form-control" type="text" id="whitelistAddress" ng-model="whitelistAddress" placeholder="User Address e.g. 0xac89b7s..."
+                    ng-change="checkWhitelistStatus(whitelistAddress)"
+                />
+            </div>
+            <div class="col-lg-3">
+            </div>
+        </div>
+        <p>
+            <span class="label label-success whitelist-label" ng-show="showCheckResult && userWhitelistStatus === true">{{ checkAddress || "User" }} is in the Whitelist</span>
+            <span class="label label-danger whitelist-label" ng-show="showCheckResult && userWhitelistStatus !== true">{{ checkAddress || "User"}} is NOT the Whitelist</span>
+        </p>
+
+        <button class="btn btn-default" ng-click="checkWhitelistStatus(whitelistAddress)">Check Status</button>
+        <button class="btn btn-primary" ng-click="addToWhitelist(whitelistAddress)">Add To Whitelist</button>
+        <button class="btn btn-danger" ng-click="removeFromWhitelist(whitelistAddress)">Remove From Whitelist</button>
     </div>
 
     <div class="row admin-action">

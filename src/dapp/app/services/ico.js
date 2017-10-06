@@ -138,6 +138,22 @@
             });
         }
 
+        function enableWhitelist(next) {
+            ico.enableWhitelist.sendTransaction(next);
+        }
+
+        function disableWhitelist(next) {
+            ico.disableWhitelist.sendTransaction(next);
+        }
+
+        function addToWhitelist(address, next) {
+            ico.addToWhitelist.sendTransaction(address, next);
+        }
+
+        function removeFromWhitelist(address, next) {
+            ico.removeFromWhitelist.sendTransaction(address, { gas: 40000 }, next);
+        }
+
         function setMinPurchase(price, next) {
             var wei = web3.toWei(price, "ether");
             ico.setMinPurchase.sendTransaction(wei, function (err, result) {
@@ -181,6 +197,34 @@
         function name(next) {
             getICO().then(function (ico) {
                 ico.name(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function checkWhitelistStatus(address, next) {
+            getICO().then(function (ico) {
+                ico.whitelist(address, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function whitelistEnabled(next) {
+            getICO().then(function (ico) {
+                ico.whitelistEnabled(function (err, result) {
                     if (err) {
                         return next(err);
                     }
@@ -300,6 +344,10 @@
             setMinPurchase: setMinPurchase,
             totalSupply: totalSupply,
             name: name,
+            addToWhitelist: addToWhitelist,
+            removeFromWhitelist: removeFromWhitelist,
+            whitelistEnabled: whitelistEnabled,
+            checkWhitelistStatus: checkWhitelistStatus,
             paused: paused,
             symbol: symbol,
             refund: refund,
@@ -310,6 +358,8 @@
             ethBalance: ethBalance,
             buyTokenData: buyTokenData,
             withdrawEth: withdrawEth,
+            enableWhitelist: enableWhitelist,
+            disableWhitelist: disableWhitelist,
             pauseICO: pauseICO,
             takeOwnership: takeOwnership,
             unpauseICO: unpauseICO

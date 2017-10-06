@@ -80,6 +80,9 @@ h6 {
 #page-coin-admin .admin-action h3 {
   margin-top: 2px;
 }
+#page-coin-admin .whitelist-label {
+  font-size: 100%;
+}
 #page-wallet .key {
   color: white;
 }

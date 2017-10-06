@@ -115,6 +115,16 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     }
 
+    function whitelistEnabled() {
+        ico.whitelistEnabled(function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
+            $scope.whitelistEnabled = data;
+            $scope.$apply();
+        });
+    }
+
     function tokensRemaining() {
         ico.tokensRemaining(function (err, data) {
             if (err) {
@@ -205,6 +215,68 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.enableWhitelist = function () {
+        ico.enableWhitelist(function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            console.log("Refund txId", response);
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the Enable Whitelist was successful.");
+        });
+    };
+
+    $scope.disableWhitelist = function () {
+        ico.disableWhitelist(function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            console.log("Refund txId", response);
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the Disable Whitelist was successful.");
+        });
+    };
+
+    $scope.addToWhitelist = function (address) {
+        $scope.showCheckResult = false;
+        ico.addToWhitelist(address, function (err) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the withdraw was successful.");
+        });
+    };
+
+    $scope.removeFromWhitelist = function (address) {
+        $scope.showCheckResult = false;
+        ico.removeFromWhitelist(address, function (err) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the withdraw was successful.");
+        });
+    };
+
+    $scope.checkWhitelistStatus = function (address) {
+        $scope.showCheckResult = false;
+        $scope.userWhitelistStatus = undefined;
+        $scope.checkAddress = address;
+        ico.checkWhitelistStatus(address, function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            console.log(response);
+            $scope.userWhitelistStatus = response;
+            $scope.showCheckResult = true;
+            $scope.$apply();
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
@@ -220,6 +292,7 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         paused();
         owner();
         minPurchase();
+        whitelistEnabled();
     }
 
     updateDetails();
@@ -596,6 +669,22 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function enableWhitelist(next) {
+            ico.enableWhitelist.sendTransaction(next);
+        }
+
+        function disableWhitelist(next) {
+            ico.disableWhitelist.sendTransaction(next);
+        }
+
+        function addToWhitelist(address, next) {
+            ico.addToWhitelist.sendTransaction(address, next);
+        }
+
+        function removeFromWhitelist(address, next) {
+            ico.removeFromWhitelist.sendTransaction(address, { gas: 40000 }, next);
+        }
+
         function setMinPurchase(price, next) {
             var wei = web3.toWei(price, "ether");
             ico.setMinPurchase.sendTransaction(wei, function (err, result) {
@@ -639,6 +728,34 @@ app.config(function ($routeProvider, $locationProvider) {
         function name(next) {
             getICO().then(function (ico) {
                 ico.name(function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function checkWhitelistStatus(address, next) {
+            getICO().then(function (ico) {
+                ico.whitelist(address, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function whitelistEnabled(next) {
+            getICO().then(function (ico) {
+                ico.whitelistEnabled(function (err, result) {
                     if (err) {
                         return next(err);
                     }
@@ -758,6 +875,10 @@ app.config(function ($routeProvider, $locationProvider) {
             setMinPurchase: setMinPurchase,
             totalSupply: totalSupply,
             name: name,
+            addToWhitelist: addToWhitelist,
+            removeFromWhitelist: removeFromWhitelist,
+            whitelistEnabled: whitelistEnabled,
+            checkWhitelistStatus: checkWhitelistStatus,
             paused: paused,
             symbol: symbol,
             refund: refund,
@@ -768,6 +889,8 @@ app.config(function ($routeProvider, $locationProvider) {
             ethBalance: ethBalance,
             buyTokenData: buyTokenData,
             withdrawEth: withdrawEth,
+            enableWhitelist: enableWhitelist,
+            disableWhitelist: disableWhitelist,
             pauseICO: pauseICO,
             takeOwnership: takeOwnership,
             unpauseICO: unpauseICO
