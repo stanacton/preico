@@ -37,7 +37,9 @@ contract PreICO is WhitelistPauseableToken {
         return _price;
     }
 
-    uint public ethBalance;
+    function ethBalance() constant returns (uint) {
+        return this.balance;
+    }
 
     function setPrice(uint _newPrice) onlyOwner returns(bool) {
         _price = _newPrice;
@@ -56,8 +58,7 @@ contract PreICO is WhitelistPauseableToken {
         require(purchasesEnabled);
         require(msg.value > minPurchase);
 
-        ethBalance += msg.value;
-        uint tokens = this.calculatTokens(msg.value);
+        uint tokens = this.calculateTokens(msg.value);
         if (balances[owner] >= tokens && tokens > 0 && balances[msg.sender] + tokens > balances[msg.sender]) { 
             balances[msg.sender] += tokens;
             balances[owner] -= tokens;
@@ -73,21 +74,19 @@ contract PreICO is WhitelistPauseableToken {
         purchasesEnabled = enabled;
     }
 
-    function calculatTokens(uint eth) constant returns (uint) {
+    function calculateTokens(uint eth) constant returns (uint) {
         uint ten = 10;
         uint tens = ten ** (decimals);
         return SafeMath.mul(eth, tens) / _price;
     }
 
     function withdrawEth() onlyOwner returns (bool) {
-        uint amount = ethBalance;
-        ethBalance = 0;
-        require(msg.sender.send(amount));
+        require(msg.sender.send(this.balance));
         return true;
     }
 
     function deposit() onlyOwner payable returns (bool) {
-        ethBalance += msg.value;
+        return true;
     }
 
     function refund(address refundAccount, uint ethAmount, uint tokens) onlyOwner returns (bool) {
@@ -99,7 +98,6 @@ contract PreICO is WhitelistPauseableToken {
         balances[refundAccount] -= tokens;
         balances[owner] += tokens;
 
-        ethBalance -= ethAmount;
         require(refundAccount.send(ethAmount));
 
         return true;

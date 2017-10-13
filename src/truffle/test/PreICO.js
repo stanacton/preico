@@ -617,7 +617,7 @@ contract("PreICO", function(accounts) {
                         return ico.setPrice(price);
                     }).then(function() {
                         
-                        return ico.calculatTokens.call(eth);
+                        return ico.calculateTokens.call(eth);
                     }).then(function(tokens) {
                         assert.equal(fromWei(tokens.valueOf()), (td.expected));
                         done();
