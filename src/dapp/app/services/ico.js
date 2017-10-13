@@ -138,6 +138,13 @@
             });
         }
 
+        function setPriceForCustomer(customerAddress, price, next) {
+            var wei = web3.toWei(price, "ether");
+            ico.setPriceForCustomer.sendTransaction(customerAddress, wei, function (err, result) {
+                next(err, result);
+            });
+        }
+
         function enableWhitelist(next) {
             ico.enableWhitelist.sendTransaction(next);
         }
@@ -216,6 +223,20 @@
                     }
 
                     next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function checkPriceForCustomer(address, next) {
+            getICO().then(function (ico) {
+                ico.customerPrice(address, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result));
                 });
             }, function (err) {
                 console.error(err);
@@ -376,6 +397,8 @@
             disableWhitelist: disableWhitelist,
             pauseICO: pauseICO,
             takeOwnership: takeOwnership,
+            setPriceForCustomer: setPriceForCustomer,
+            checkPriceForCustomer: checkPriceForCustomer,
             unpauseICO: unpauseICO
         };
     }]);

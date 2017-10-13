@@ -173,6 +173,26 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.setPriceForCustomer = function (userAddress, price) {
+        if (!userAddress) {
+            return alert( "User Address is required.");
+        }
+
+        if (!price) {
+            return alert( "price is required.");
+        }
+
+
+        ico.setPriceForCustomer(userAddress, price, function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the custom price setting was successful.");
+        });
+    };
+
     $scope.takeOwnership = function () {
         console.log("taking ownership");
         ico.takeOwnership(function (err) {
@@ -282,6 +302,22 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.checkPriceForCustomer = function (address) {
+
+        $scope.showPriceCheckResult = false;
+        $scope.priceCheckAddress = address;
+        ico.checkPriceForCustomer(address, function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            $scope.customPrice = response;
+            $scope.showPriceCheckResult = true;
+            $scope.$apply();
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
@@ -343,6 +379,14 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
             }
 
             $scope.currentPrice = price;
+
+            ico.checkPriceForCustomer(web3.eth.accounts[0], function (err, result) {
+                if (result > 0) {
+                    $scope.currentPrice = result;
+                    $scope.$apply();
+                }
+            });
+
             $scope.$apply();
         });
 
@@ -361,7 +405,12 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
         updateBalance();
     });
 
-    updateBalance();
+    updateData();
+
+    function updateData() {
+        updateBalance();
+       // updatePrice();
+    }
 
     $scope.updatePrice = function(ethAmount) {
         $scope.tokenAmount = ethAmount / $scope.currentPrice;
@@ -380,7 +429,6 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
                 $scope.displayConfirmData = true;
                 $scope.contractAddress = details.contractAddress;
                 $scope.buyTokenData = details.tranData;
-                console.log(ico.contractAddress);
             });
         }
     };
@@ -562,6 +610,13 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function setPriceForCustomer(customerAddress, price, next) {
+            var wei = web3.toWei(price, "ether");
+            ico.setPriceForCustomer.sendTransaction(customerAddress, wei, function (err, result) {
+                next(err, result);
+            });
+        }
+
         function enableWhitelist(next) {
             ico.enableWhitelist.sendTransaction(next);
         }
@@ -640,6 +695,20 @@ app.config(function ($routeProvider, $locationProvider) {
                     }
 
                     next(null, (result));
+                });
+            }, function (err) {
+                console.error(err);
+            });
+        }
+
+        function checkPriceForCustomer(address, next) {
+            getICO().then(function (ico) {
+                ico.customerPrice(address, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    next(null, web3.fromWei(result));
                 });
             }, function (err) {
                 console.error(err);
@@ -800,6 +869,8 @@ app.config(function ($routeProvider, $locationProvider) {
             disableWhitelist: disableWhitelist,
             pauseICO: pauseICO,
             takeOwnership: takeOwnership,
+            setPriceForCustomer: setPriceForCustomer,
+            checkPriceForCustomer: checkPriceForCustomer,
             unpauseICO: unpauseICO
         };
     }]);

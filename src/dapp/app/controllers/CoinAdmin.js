@@ -166,6 +166,26 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.setPriceForCustomer = function (userAddress, price) {
+        if (!userAddress) {
+            return alert( "User Address is required.");
+        }
+
+        if (!price) {
+            return alert( "price is required.");
+        }
+
+
+        ico.setPriceForCustomer(userAddress, price, function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            alert("The transaction has been submitted.  Please wait till the next blocks are mined and check if the custom price setting was successful.");
+        });
+    };
+
     $scope.takeOwnership = function () {
         console.log("taking ownership");
         ico.takeOwnership(function (err) {
@@ -271,6 +291,22 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
             console.log(response);
             $scope.userWhitelistStatus = response;
             $scope.showCheckResult = true;
+            $scope.$apply();
+        });
+    };
+
+    $scope.checkPriceForCustomer = function (address) {
+
+        $scope.showPriceCheckResult = false;
+        $scope.priceCheckAddress = address;
+        ico.checkPriceForCustomer(address, function (err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+
+            $scope.customPrice = response;
+            $scope.showPriceCheckResult = true;
             $scope.$apply();
         });
     };

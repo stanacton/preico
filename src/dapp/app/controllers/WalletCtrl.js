@@ -11,6 +11,14 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
             }
 
             $scope.currentPrice = price;
+
+            ico.checkPriceForCustomer(web3.eth.accounts[0], function (err, result) {
+                if (result > 0) {
+                    $scope.currentPrice = result;
+                    $scope.$apply();
+                }
+            });
+
             $scope.$apply();
         });
 
@@ -29,7 +37,12 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
         updateBalance();
     });
 
-    updateBalance();
+    updateData();
+
+    function updateData() {
+        updateBalance();
+       // updatePrice();
+    }
 
     $scope.updatePrice = function(ethAmount) {
         $scope.tokenAmount = ethAmount / $scope.currentPrice;
@@ -48,7 +61,6 @@ app.controller("WalletCtrl", ["$scope", "web3","ico","$rootScope", function ($sc
                 $scope.displayConfirmData = true;
                 $scope.contractAddress = details.contractAddress;
                 $scope.buyTokenData = details.tranData;
-                console.log(ico.contractAddress);
             });
         }
     };

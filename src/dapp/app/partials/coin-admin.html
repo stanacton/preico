@@ -193,4 +193,27 @@
         <button class="btn btn-primary" ng-click="addToWhitelist(whitelistAddress)">Add To Whitelist</button>
         <button class="btn btn-danger" ng-click="removeFromWhitelist(whitelistAddress)">Remove From Whitelist</button>
     </div>
+
+    <div class="row admin-action">
+        <h3>Custom Price</h3>
+        <p>A custom price can be set for each user.  If price is set to 0, then the default price is used.</p>
+        <div class="row">
+            <div class="form-group col-lg-9">
+                <label for="customerPriceAddress">User Address</label>
+                <input class="form-control" type="text" id="customerPriceAddress" ng-model="customerPriceAddress" placeholder="User Address e.g. 0xac89b7s..."
+                    ng-change="checkPriceForCustomer(customerPriceAddress)"
+                />
+            </div>
+            <div class="form-group col-lg-9">
+                <label for="newCustomerPrice">Custom Price</label>
+                <input class="form-control" type="number" id="newCustomerPrice" ng-model="newCustomerPrice" placeholder="Price in ETH"/>
+            </div>
+        </div>
+        <p>
+            <span class="label label-success whitelist-label" ng-show="showPriceCheckResult === true">Custom Price is {{ customPrice }} ETH/Token</span>
+        </p>
+
+        <button class="btn btn-default" ng-click="checkPriceForCustomer(customerPriceAddress)">Check Current Price</button>
+        <button class="btn btn-primary" ng-click="setPriceForCustomer(customerPriceAddress, newCustomerPrice)">Set Custom Price</button>
+    </div>
 </div>
