@@ -52,7 +52,7 @@ contract PreICO is WhitelistPauseableToken {
         return balances[owner];
     }
 
-    function buyTokens() payable whenNotPaused returns (bool) {
+    function buyTokens() payable returns (bool) {
         require(purchasesEnabled);
         require(msg.value > minPurchase);
 
