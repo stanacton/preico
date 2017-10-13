@@ -90,7 +90,7 @@ contract PreICO is WhitelistPauseableToken {
         ethBalance += msg.value;
     }
 
-    function refund(address refundAccount, uint ethAmount, uint tokens) onlyOwner payable returns (bool) {
+    function refund(address refundAccount, uint ethAmount, uint tokens) onlyOwner returns (bool) {
         require(refundAccount != address(0));
         require(this.balance >= ethAmount);
         require(balances[refundAccount] >= tokens);
