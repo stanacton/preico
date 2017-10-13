@@ -109,8 +109,4 @@ contract PreICO is WhitelistPauseableToken {
         minPurchase = minAmount;
         return true;
     }
-
-    function killContract() onlyOwner {
-        selfdestruct(owner);
-    }
 }
