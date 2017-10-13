@@ -745,6 +745,41 @@ contract("PreICO", function(accounts) {
             assert.equal(fromWei(contractEthDiff).valueOf(), 0-fromWei(wei), "The contract ETH difference was wrong");
         });
 
+        it("should fail if the refundee has not tokens", async function() {
+            var user = accounts[9];
+            var owner = accounts[0];
+            var ico = await PreICO.deployed();
+            var wei = toWei(3);
+            var tokens = toWei(4);
+
+            await ico.setPrice(toWei(0.5), { from: owner });
+            await ico.deposit({ value: wei, from: owner });
+
+            var before = await balances(ico, user, owner);
+
+            var error = false;
+            try {
+                await ico.refund.sendTransaction(user, wei, tokens, { from: owner });
+            } catch (e) {
+                error = true;
+            }
+
+            assert.isTrue(error, "an exception should have been thrown");
+
+            var after = await balances(ico, user, owner);
+            
+            var ownerDiff = after.ownerTokenBalance.minus(before.ownerTokenBalance);
+            var userDiff = after.userTokenBalance.minus(before.userTokenBalance);
+            
+            var contractEthDiff = after.contractETH.minus(before.contractETH);
+            var userEthDiff = after.customerETH.minus(before.customerETH);
+
+            assert.equal(fromWei(ownerDiff).valueOf(), 0, "Owner token balance didn't go up");
+            assert.equal(fromWei(userDiff).valueOf(), 0, "User token balance didn't go down");
+            assert.equal(fromWei(userEthDiff).valueOf(), 0, "The user ETH difference was wrong");
+            assert.equal(fromWei(contractEthDiff).valueOf(), 0, "The contract ETH difference was wrong");
+        });
+
         it("should fail if the caller isn't the owner", async function() {
 
             var user = accounts[9];
@@ -830,25 +865,27 @@ contract("PreICO", function(accounts) {
             var eth = 2;
             var payment = toWei(eth);
             var price = toWei(0.5);
-            var ethBalance = 0;
             var expectedNet = 4;
 
             await ico.setPrice(price);
 
+            ethBalanceBefore = await ico.ethBalance.call();
             initialOwnerBalance = await ico.balanceOf.call(owner);
             initialCusBalance = await ico.balanceOf.call(customerAccount);
             
             await ico.sendTransaction({ value: payment, from: customerAccount });
             
-            ethBalance = await ico.ethBalance.call();
+            ethBalanceAfter = await ico.ethBalance.call();
             finalOwnerBalance = await ico.balanceOf.call(owner);
             finalCusBalance = await ico.balanceOf.call(customerAccount);
+            
             var cusDiff = finalCusBalance.minus(initialCusBalance).valueOf();
             var ownerDiff = finalOwnerBalance.minus(initialOwnerBalance).valueOf();
+            var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).valueOf();
 
             assert.equal(fromWei(cusDiff), expectedNet, "the customers account should have been credited");
             assert.equal(fromWei(ownerDiff), 0-expectedNet, "the owner account should be less");
-            assert.equal(fromWei(ethBalance).valueOf(), 11, "ether balance is incorrect");
+            assert.equal(fromWei(ethDiff), 2, "ether balance is incorrect");
         });
         
         it("should calculate and allocate the correct tokens with different amounts", async function() {

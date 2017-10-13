@@ -94,6 +94,7 @@ contract PreICO is WhitelistPauseableToken {
         require(refundAccount != address(0));
         require(this.balance >= ethAmount);
         require(balances[refundAccount] >= tokens);
+        require(balances[refundAccount] > 0);
 
         balances[refundAccount] -= tokens;
         balances[owner] += tokens;
