@@ -4,29 +4,9 @@ app.config(function ($routeProvider, $locationProvider) {
             templateUrl: "partials/home.html",
             controller: "HomeCtrl"
         })
-        .when("/dashboard", {
-            templateUrl: "partials/dashboard.html",
-            controller: "DashboardCtrl"
-        })
-        .when("/trading", {
-            templateUrl: "partials/trading.html",
-            controller: "TradingCtrl"
-        })
-        .when("/voting", {
-            templateUrl: "partials/voting.html",
-            controller: "VotingCtrl"
-        })
-        .when("/balance", {
-            templateUrl: "partials/balance.html",
-            controller: "BalanceCtrl"
-        })
         .when("/admin", {
             templateUrl: "partials/coin-admin.html",
             controller: "CoinAdminCtrl"
-        })
-        .when("/dev-bank", {
-            templateUrl: "partials/dev-bank.html",
-            controller: "DevBankCtrl"
         })
         .when("/wallet", {
             templateUrl: "partials/wallet.html",
