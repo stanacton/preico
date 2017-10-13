@@ -519,6 +519,45 @@ contract("PreICO", function(accounts) {
             });
         });
         
+        it("should calculate and allocate the correct tokens with specific price", async function() {
+            var ownerBalance;
+            
+            var initialOwnerBalance, finalOwnerBalance;
+            var initialCusBalance, finalCusBalance;
+            var watcher;
+            var eth = 2;
+            var payment = toWei(eth);
+            var price = toWei(0.5);
+            var customerPrice = toWei(0.25);
+            var ethBalanceBefore, ethBalanceAfter;
+            var expectedNet = 8;
+
+            watcher = ico.Transfer();
+            await ico.setPrice(price);
+            await ico.setPriceForCustomer(customerAccount, customerPrice);
+
+            initialOwnerBalance = await ico.balanceOf.call(owner);
+            initialCusBalance = await ico.balanceOf.call(customerAccount);
+            ethBalanceBefore = await ico.ethBalance.call();
+            
+            await ico.buyTokens({ value: payment,  from: customerAccount });
+            
+            finalOwnerBalance = await ico.balanceOf.call(owner);
+            finalCusBalance = await ico.balanceOf.call(customerAccount);
+            ethBalanceAfter = await ico.ethBalance.call();
+
+            var cusDiff = finalCusBalance.minus(initialCusBalance).valueOf();
+            var ownerDiff = finalOwnerBalance.minus(initialOwnerBalance).valueOf();
+            var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).valueOf();
+
+            assert.equal(fromWei(cusDiff), expectedNet, "the customers account should have been credited");
+            assert.equal(fromWei(ownerDiff), 0-expectedNet, "the owner account should be less");
+            assert.equal(fromWei(ethDiff), 2, "ether balance is incorrect");
+
+            // teardown
+            await ico.setPriceForCustomer(customerAccount, 0);            
+        });
+        
         it("should calculate and allocate the correct tokens with different amounts", function() {
             var ownerBalance, ico;
             var customerAccount = accounts[6];
@@ -606,22 +645,14 @@ contract("PreICO", function(accounts) {
         for(var i=0;i < pricingTestData.length;i++) {
             var data = pricingTestData[i];
             (function(td) {
-                it("should calculate the correct price for price: " + td.price + " for eth: " + td.eth, function(done) {
+                it("should calculate the correct price for price: " + td.price + " for eth: " + td.eth, async function() {
                     var ico;
                     var price = toWei(td.price);
                     var eth = toWei(td.eth);
-        
-                    PreICO.deployed().then(function(instance) {
-                        ico = instance;
-                        
-                        return ico.setPrice(price);
-                    }).then(function() {
-                        
-                        return ico.calculateTokens.call(eth);
-                    }).then(function(tokens) {
-                        assert.equal(fromWei(tokens.valueOf()), (td.expected));
-                        done();
-                    });        
+                    
+                    ico = await PreICO.deployed();
+                    tokens = await ico.calculateTokens.call(eth, price);
+                    assert.equal(fromWei(tokens.valueOf()), (td.expected));
                 });
             })(data);
         }

@@ -12,6 +12,8 @@ contract PreICO is WhitelistPauseableToken {
     uint _price;
     bool public purchasesEnabled;
 
+    mapping(address => uint) public customerPrice;
+
     function PreICO(uint256 initialSupply, uint256 price) {
         totalSupply = initialSupply * (10 ** uint256(decimals));
       
@@ -31,6 +33,14 @@ contract PreICO is WhitelistPauseableToken {
         balances[owner] = 0;
         balances[pendingOwner] = ownerBalance;
         super.claimOwnership();
+    }
+
+    function setPriceForCustomer(address customerAddress, uint price) onlyOwner returns (bool) {
+        if (price < 0) {
+            revert();
+        }
+        customerPrice[customerAddress] = price;
+        return true;
     }
 
     function pricePerETH() constant returns (uint) {
@@ -58,7 +68,12 @@ contract PreICO is WhitelistPauseableToken {
         require(purchasesEnabled);
         require(msg.value > minPurchase);
 
-        uint tokens = this.calculateTokens(msg.value);
+        uint multipler = _price;
+        if (customerPrice[msg.sender] > 0) {
+            multipler = customerPrice[msg.sender];
+        }
+
+        uint tokens = this.calculateTokens(msg.value, multipler);
         if (balances[owner] >= tokens && tokens > 0 && balances[msg.sender] + tokens > balances[msg.sender]) { 
             balances[msg.sender] += tokens;
             balances[owner] -= tokens;
@@ -74,9 +89,9 @@ contract PreICO is WhitelistPauseableToken {
         purchasesEnabled = enabled;
     }
 
-    function calculateTokens(uint eth) constant returns (uint) {
+    function calculateTokens(uint eth, uint tokenPrice) constant returns (uint) {
         uint tens = uint(10) ** (decimals);
-        return SafeMath.mul(eth, tens) / _price;
+        return SafeMath.mul(eth, tens) / tokenPrice;
     }
 
     function withdrawEth() onlyOwner returns (bool) {
