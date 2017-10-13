@@ -75,8 +75,7 @@ contract PreICO is WhitelistPauseableToken {
     }
 
     function calculateTokens(uint eth) constant returns (uint) {
-        uint ten = 10;
-        uint tens = ten ** (decimals);
+        uint tens = uint(10) ** (decimals);
         return SafeMath.mul(eth, tens) / _price;
     }
 
