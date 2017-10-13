@@ -789,19 +789,122 @@ contract("PreICO", function(accounts) {
     });
 
     describe("setMinPurchase", function() {
-     it("should set the min purchase when requested", async function() {
-        var owner = accounts[0];
-        var minPurchase = toWei(22);
+        after(async function() {
+            // teardown the test conditions
+            await ico.setMinPurchase(0, { from: accounts[0] });
+        });
+        it("should set the min purchase when requested", async function() {
+            var owner = accounts[0];
+            var minPurchase = toWei(22);
 
-        var ico = await PreICO.deployed();
-        var result = await ico.setMinPurchase(minPurchase, { from: owner });
-        var minAfter = await ico.minPurchase();
+            var ico = await PreICO.deployed();
+            var result = await ico.setMinPurchase(minPurchase, { from: owner });
+            var minAfter = await ico.minPurchase();
 
-        assert.equal(fromWei(minAfter).valueOf(), 22);
-
-        // teardown the test conditions
-        await ico.setMinPurchase(0, { from: owner });
+            assert.equal(fromWei(minAfter).valueOf(), 22);
+        });
     });
+
+    describe("default function should call buyTokens", function() {
+        var ico;
+        var customerAccount = accounts[6];
+        var owner = accounts[0];
+
+        before(async function() {
+            ico = await PreICO.deployed();
+            await ico.enableWhitelist();
+            await ico.addToWhitelist(customerAccount);
+        });
+
+        after(async function() {
+            await ico.disableWhitelist();
+            await ico.removeFromWhitelist(customerAccount);
+        });
+
+        it("should calculate and allocate the correct tokens", async function() {
+            var ownerBalance;
+            
+            var initialOwnerBalance, finalOwnerBalance;
+            var initialCusBalance, finalCusBalance;
+            var watcher;
+            var eth = 2;
+            var payment = toWei(eth);
+            var price = toWei(0.5);
+            var ethBalance = 0;
+            var expectedNet = 4;
+
+            await ico.setPrice(price);
+
+            initialOwnerBalance = await ico.balanceOf.call(owner);
+            initialCusBalance = await ico.balanceOf.call(customerAccount);
+            
+            await ico.sendTransaction({ value: payment, from: customerAccount });
+            
+            ethBalance = await ico.ethBalance.call();
+            finalOwnerBalance = await ico.balanceOf.call(owner);
+            finalCusBalance = await ico.balanceOf.call(customerAccount);
+            var cusDiff = finalCusBalance.minus(initialCusBalance).valueOf();
+            var ownerDiff = finalOwnerBalance.minus(initialOwnerBalance).valueOf();
+
+            assert.equal(fromWei(cusDiff), expectedNet, "the customers account should have been credited");
+            assert.equal(fromWei(ownerDiff), 0-expectedNet, "the owner account should be less");
+            assert.equal(fromWei(ethBalance).valueOf(), 11, "ether balance is incorrect");
+        });
+        
+        it("should calculate and allocate the correct tokens with different amounts", async function() {
+            var ownerBalance;
+            var customerAccount = accounts[6];
+            var owner = accounts[0];
+            
+            var initialOwnerBalance, finalOwnerBalance;
+            var initialCusBalance, finalCusBalance;
+
+            var eth = 2;
+            var payment = toWei(eth);
+            var price = toWei(4);
+            var ethBalance = 0;
+            var expectedNet = 0.5;
+            var ethBalanceBefore, ethBalanceAfter;
+            
+            await ico.setPrice(price);
+            ethBalanceBefore = await ico.ethBalance.call();
+            initialOwnerBalance = await ico.balanceOf.call(owner);
+            initialCusBalance = await ico.balanceOf.call(customerAccount);
+
+            await ico.sendTransaction({ value: payment, from: customerAccount });
+
+            ethBalanceAfter = await ico.ethBalance.call();
+            finalOwnerBalance = await ico.balanceOf.call(owner);
+            finalCusBalance = await ico.balanceOf.call(customerAccount);
+
+            var cusDiff = finalCusBalance.minus(initialCusBalance).valueOf();
+            var ownerDiff = finalOwnerBalance.minus(initialOwnerBalance).valueOf();
+            var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).valueOf();
+
+            assert.equal(fromWei(cusDiff), expectedNet, "the customers account should have been credited");
+            assert.equal(fromWei(ownerDiff), 0-expectedNet, "the owner account should be less");
+            assert.equal(fromWei(ethDiff), eth, "ether balance is incorrect");
+        }); 
+
+        it("should fail when the ether is below the minimum purchase amount", async function() {
+            var ico = await PreICO.deployed();
+
+            await ico.setMinPurchase.sendTransaction(toWei(3), { from: accounts[0]});
+            var error =false;
+
+            try {
+                await ico.sendTransaction({ value: toWei(2), from: accounts[2] });
+            } catch (e) {
+                error = true;
+            }
+
+            assert.isTrue(error, "An exception should have been thrown.");
+
+            //revert 
+            await ico.setMinPurchase.sendTransaction(0, { from: accounts[0]});
+        });
+        
+    })
 
     it("should fail when it's not the owner", async function() {
         var notOwner = accounts[2];
@@ -821,9 +924,6 @@ contract("PreICO", function(accounts) {
         var minAfter = await ico.minPurchase();
         assert.equal(minBefore.valueOf(), minAfter.valueOf());
     });
-});
-
-
 });
 
 function toWei(value) {

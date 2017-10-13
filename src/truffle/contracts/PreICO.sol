@@ -23,7 +23,7 @@ contract PreICO is WhitelistPauseableToken {
     }
 
     function() payable {
-        revert();
+        buyTokens();
     }
 
     function claimOwnership() onlyPendingOwner public {
@@ -65,7 +65,7 @@ contract PreICO is WhitelistPauseableToken {
             Transfer(owner, msg.sender, tokens);
             return true;
         } else {
-            return false;
+            revert();
         }
     }
 
