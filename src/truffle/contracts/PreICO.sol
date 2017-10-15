@@ -69,14 +69,26 @@ contract PreICO is WhitelistPauseableToken {
         require(msg.value > minPurchase);
 
         uint multipler = _price;
+        uint refundAmount = 0;
+
         if (customerPrice[msg.sender] > 0) {
             multipler = customerPrice[msg.sender];
         }
 
         uint tokens = this.calculateTokens(msg.value, multipler);
+        if (balances[owner] < tokens) {
+            tokens = balances[owner];
+            uint ethCost = calculateTokensPrice(tokens, multipler);
+            refundAmount = SafeMath.sub(msg.value, ethCost);
+        }
+
         if (balances[owner] >= tokens && tokens > 0 && balances[msg.sender] + tokens > balances[msg.sender]) { 
             balances[msg.sender] += tokens;
             balances[owner] -= tokens;
+
+            if (refundAmount > 0) {
+               require(msg.sender.send(refundAmount));
+            }
 
             Transfer(owner, msg.sender, tokens);
             return true;
@@ -92,6 +104,11 @@ contract PreICO is WhitelistPauseableToken {
     function calculateTokens(uint eth, uint tokenPrice) constant returns (uint) {
         uint tens = uint(10) ** (decimals);
         return SafeMath.mul(eth, tens) / tokenPrice;
+    }
+
+    function calculateTokensPrice(uint tokensWithDecimals, uint tokenPrice) constant returns (uint) {
+        uint tens = uint(10) ** (decimals);
+        return SafeMath.div(tokensWithDecimals, tens).mul(tokenPrice);
     }
 
     function withdrawEth() onlyOwner returns (bool) {

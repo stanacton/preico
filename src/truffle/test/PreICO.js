@@ -1,4 +1,3 @@
-
 var PreICO = artifacts.require("../contracts/PreICO.sol");
 
 contract("PreICO", function(accounts) {
@@ -557,7 +556,7 @@ contract("PreICO", function(accounts) {
             // teardown
             await ico.setPriceForCustomer(customerAccount, 0);            
         });
-        
+       
         it("should calculate and allocate the correct tokens with different amounts", function() {
             var ownerBalance, ico;
             var customerAccount = accounts[6];
@@ -626,6 +625,33 @@ contract("PreICO", function(accounts) {
 
             //revert 
             await ico.setMinPurchase.sendTransaction(0, { from: accounts[0]});
+        });
+ 
+        it("should return unused eth", async function() {
+            var testICO = await PreICO.new(1, toWei(1));
+            var totalSupply = await testICO.totalSupply.call();
+            var price = await testICO.pricePerETH.call();
+            var user = accounts[8];
+            var watcher = testICO.Prices;
+            var cusEthBefore = await getBalance(user);
+            var cusTokensBefore = await testICO.balanceOf.call(user);
+            var values = await testICO.buyTokens({ from: user, value: toWei(8) });
+
+            var cusEthAfter = await getBalance(user);
+            var cusTokensAfter = await testICO.balanceOf(user);
+
+            var contractBalance = await testICO.ethBalance.call().valueOf();
+
+            var ethDiff = cusEthAfter.minus(cusEthBefore).valueOf();
+            var tokenDiff = cusTokensAfter.minus(cusTokensBefore).valueOf();
+            
+            assert.equal(fromWei(totalSupply).valueOf(), 1);
+            assert.equal(fromWei(price), 1);
+            assert.equal(fromWei(tokenDiff), 1);
+            assert.equal(fromWei(contractBalance), 1);
+            var ed = fromWei(ethDiff);
+            // difference should be 1 token cost plus gas cost. 
+            assert.isTrue(ed <= -1 && ed >= -1.05);            
         });
     });
 
@@ -1002,3 +1028,6 @@ function fromWei(value) {
     return web3.fromWei(value, "ether");
 }
 
+function getBalance(address) {
+    return web3.eth.getBalance(address);
+}
