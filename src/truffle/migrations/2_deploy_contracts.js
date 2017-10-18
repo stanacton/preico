@@ -1,4 +1,5 @@
 var PreICO = artifacts.require("./PreICO.sol");
+var BitcoinBridge = artifacts.require("./BitcoinBridge.sol");
 var path = require("path");
 
 var fs = require("fs");
@@ -20,5 +21,8 @@ module.exports = function(deployer) {
     } else {
       console.error("PreICO.json wasn't deployed");
     }
+
+    deployer.deploy(BitcoinBridge, PreICO.address, 1000000);
+
   });
 };
