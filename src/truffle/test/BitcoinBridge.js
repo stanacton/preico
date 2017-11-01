@@ -1,4 +1,4 @@
-var BitcoinBridge = artifacts.require("../contracts/BitcoinBridge.sol");
+/*var BitcoinBridge = artifacts.require("../contracts/BitcoinBridge.sol");
 var PreICO = artifacts.require("../contracts/PreICO.sol");
 
 contract("BitcoinBridge", function(accounts) {
@@ -287,3 +287,4 @@ function toWei(value) {
 function fromWei(value) {
     return web3.fromWei(value, "ether");
 }
+*/

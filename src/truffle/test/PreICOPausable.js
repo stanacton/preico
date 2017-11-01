@@ -36,7 +36,7 @@ contract("PreICO when paused", function(accounts) {
     });
 
     describe("enablePurchase", function() {
-        it("should disable and enable purchaseEnabled", async function() {
+        it("should disable and enable purchaseEnabled",  async function() {
             var ico = await PreICO.deployed();
             var enabled = await ico.purchasesEnabled();
             assert.isTrue(enabled, "purchaseEnabled should be true");

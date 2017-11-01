@@ -11,7 +11,7 @@ sudo apt-get -y install \
 /vagrant/scripts/install-golang.sh
 
 # Install NodeJS
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs build-essential
 sudo npm install -g npm 
 
