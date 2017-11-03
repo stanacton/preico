@@ -1,15 +1,13 @@
 pragma solidity ^0.4.11;
 
-
-import './Ownable.sol';
-
+import './DelegateOwner.sol';
 
 /**
  * @title Claimable
  * @dev Extension for the Ownable contract, where the ownership needs to be claimed.
  * This allows the new owner to accept the transfer.
  */
-contract Claimable is Ownable {
+contract Claimable is DelegateOwner {
   address public pendingOwner;
 
   /**

@@ -1,9 +1,8 @@
 pragma solidity ^0.4.11;
 
-import "./WhitelistPauseableToken.sol";
+import "./Ownable.sol";
 
-contract DelegateOwner is WhitelistPauseableToken {
-
+contract DelegateOwner is Ownable {
     mapping(address => bool) public delegates;
 
     function addDelegate(address delegate) onlyOwner returns (bool) {
@@ -22,15 +21,5 @@ contract DelegateOwner is WhitelistPauseableToken {
         } else {
             revert();
         }
-    }
-
-    function transferAsDelegate(address _to, uint256 _value) onlyOwnerOrDelegate returns (bool) {
-        require(_to != address(0));
-
-        // SafeMath.sub will throw if there is not enough balance.
-        balances[owner] = balances[owner].sub(_value);
-        balances[_to] = balances[_to].add(_value);
-        Transfer(owner, _to, _value);
-        return true;    
     }
 }

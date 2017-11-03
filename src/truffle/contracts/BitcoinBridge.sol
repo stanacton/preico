@@ -51,24 +51,22 @@ contract BitcoinBridge is Claimable {
         require(bytes(bitcoinAddress).length >= 26);
         require(ico.purchasesEnabled());
 
-        PendingPaymentRegistration(msg.sender, bitcoinAddress, amount);
         pendingPayments[msg.sender] = PendingPayment(msg.sender, bitcoinAddress, amount, false, "");
+        PendingPaymentRegistration(msg.sender, bitcoinAddress, amount);
         return true;
     }
 
-    function confirmPayment(address userAddress, string txId) onlyOwner returns (bool) {
+    function confirmPayment(address userAddress, string txId) onlyOwnerOrDelegate returns (bool) {
         require(pendingPayments[userAddress].userAddress != address(0));
         require(pendingPayments[userAddress].amount > 0);
 
         pendingPayments[userAddress].paid = true;
         pendingPayments[userAddress].txId = txId;
 
-        // £££££££££££££££   It should now buy tokens.
+        buyTokens(userAddress, pendingPayments[userAddress].amount);
     }
 
-    event debugMe(address userAddress, uint tokens);
-
-    function buyTokens(address userAddress, uint bitcoinAmount) onlyOwner returns(bool) {
+    function buyTokens(address userAddress, uint bitcoinAmount) onlyOwnerOrDelegate returns(bool) {
         require(bitcoinAmount > minPurchase);
         require(ico.purchasesEnabled());
 
@@ -83,11 +81,8 @@ contract BitcoinBridge is Claimable {
         require(tokens <= ico.balanceOf(msg.sender) + tokens);
         require(tokens > 0);
 
-        debugMe(userAddress, tokens);
         // transfer tokens to user
-        bool result = icoAddress.delegatecall(bytes4(sha3("transfer(address,uint256)")), userAddress, tokens);
-        require(!result);
-        //require(ico.transfer(userAddress, tokens));
+        require(ico.transferAsDelegate(userAddress, tokens));
 
         return true;
     }
@@ -97,18 +92,18 @@ contract BitcoinBridge is Claimable {
         return SafeMath.mul(bitcoinAmount, tens) / tokenPrice;
     }
 
-    function setPriceForCustomer(address userAddress, uint price) onlyOwner returns(bool) {
+    function setPriceForCustomer(address userAddress, uint price) onlyOwnerOrDelegate returns(bool) {
         require(userAddress != address(0));
         customerPrice[userAddress] = price;
         return true;
     }
 
-    function setPrice(uint price) onlyOwner returns(bool) {
+    function setPrice(uint price) onlyOwnerOrDelegate returns(bool) {
         pricePerBitcoin = price;
         return true;
     }
 
-    function setMinPurchase(uint amountInBitcoin) onlyOwner returns(bool) {
+    function setMinPurchase(uint amountInBitcoin) onlyOwnerOrDelegate returns(bool) {
         minPurchase = amountInBitcoin;
         return true;
     }

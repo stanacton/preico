@@ -1,8 +1,8 @@
 pragma solidity ^0.4.11;
 
-import "./DelegateOwner.sol";
+import "./DelegateableOwnerToken.sol";
 
-contract PreICO is DelegateOwner {
+contract PreICO is DelegateableOwnerToken {
     address public owner;
     string public constant name = "BB Token";
     string public constant symbol = "BBTOK";

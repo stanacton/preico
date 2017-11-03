@@ -1,4 +1,4 @@
-/*var BitcoinBridge = artifacts.require("../contracts/BitcoinBridge.sol");
+var BitcoinBridge = artifacts.require("../contracts/BitcoinBridge.sol");
 var PreICO = artifacts.require("../contracts/PreICO.sol");
 
 contract("BitcoinBridge", function(accounts) {
@@ -10,6 +10,7 @@ contract("BitcoinBridge", function(accounts) {
     before(async function() {
         ico = await PreICO.new(1000000000, toWei(2));
         bb = await BitcoinBridge.new(ico.address, toWei(2)); 
+        await ico.addDelegate(bb.address);
         await ico.enablePurchases(true);       
     });
 
@@ -124,6 +125,57 @@ contract("BitcoinBridge", function(accounts) {
             assert.equal(pendingPayment[2].valueOf(), amount, "The amount was wrong.");
             assert.isTrue(pendingPayment[3], "Paid should have been true.");
             assert.equal(pendingPayment[4], txId, "The txId was incorrect.");
+        });
+
+        it("should buy the required tokens", async function() {
+
+            var address = "mybitcoinaddressmybitcoinaddress";
+          //  var amount = 33;
+            var user = accounts[2];
+            var txId = "txID1234455";
+
+            var user = accounts[2];
+            var btc = toWei(2);
+            var price = toWei(1);
+
+            await bb.setPrice(price);
+
+            var userTokensBefore = await ico.balanceOf(user);
+            var ownerTokensBefore = await ico.balanceOf(owner);
+            var watcher = await ico.Transfer();
+
+            await bb.registerPendingPayment(address, btc, { from: user });
+
+            var pendingPayment = await bb.pendingPayments(user);
+            assert.isFalse(pendingPayment == null);
+            assert.equal(pendingPayment[0], user, "The user address was wrong.");
+            assert.equal(pendingPayment[1], address, "The user address was wrong.");
+            assert.equal(pendingPayment[2].valueOf(), btc, "The amount was wrong.");
+            assert.isFalse(pendingPayment[3], "Paid should have been false.");
+
+            await bb.confirmPayment(user, txId);
+
+            var pendingPayment = await bb.pendingPayments(user);
+
+            assert.isFalse(pendingPayment == null);
+            assert.equal(pendingPayment[0], user, "The user address was wrong.");
+            assert.equal(pendingPayment[1], address, "The user address was wrong.");
+            assert.equal(pendingPayment[2].valueOf(), btc, "The amount was wrong.");
+            assert.isTrue(pendingPayment[3], "Paid should have been true.");
+            assert.equal(pendingPayment[4], txId, "The txId was incorrect.");
+
+     //       await bb.buyTokens(user, btc, {from: owner});
+            
+            var events = await watcher.get();
+            
+            var userTokensAfter  = await ico.balanceOf(user);
+            var ownerTokensAfter  = await ico.balanceOf(owner);
+
+            var userDiff = userTokensAfter.minus(userTokensBefore).valueOf();
+            var ownerDiff = ownerTokensAfter.minus(ownerTokensBefore).valueOf();
+
+            assert.equal(fromWei(userDiff), 2, "User token difference was wrong");
+            assert.equal(fromWei(ownerDiff), -2, "owner token difference was wrong");
         });
 
         it("should fail if not the owner", async function() {
@@ -248,16 +300,15 @@ contract("BitcoinBridge", function(accounts) {
             var btc = toWei(2);
             var price = toWei(1);
 
-            await bb.setPrice(btc);
+            await bb.setPrice(price);
 
             var userTokensBefore = await ico.balanceOf(user);
             var ownerTokensBefore = await ico.balanceOf(owner);
-            var watcher = ico.debug2();
-            
-            await bb.buyTokens.sendTransaction(user, btc, {from: owner});
+            var watcher = await ico.Transfer();
+
+            await bb.buyTokens(user, btc, {from: owner});
             
             var events = await watcher.get();
-            console.log(owner, events);
             
             var userTokensAfter  = await ico.balanceOf(user);
             var ownerTokensAfter  = await ico.balanceOf(owner);
@@ -266,8 +317,7 @@ contract("BitcoinBridge", function(accounts) {
             var ownerDiff = ownerTokensAfter.minus(ownerTokensBefore).valueOf();
 
             assert.equal(fromWei(userDiff), 2, "User token difference was wrong");
-            assert.equal(fromWei(userDiff), -2, "owner token difference was wrong");
-
+            assert.equal(fromWei(ownerDiff), -2, "owner token difference was wrong");
         });
 
         it("should apply the custom price for a given user");
@@ -287,4 +337,3 @@ function toWei(value) {
 function fromWei(value) {
     return web3.fromWei(value, "ether");
 }
-*/
