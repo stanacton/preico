@@ -96,7 +96,21 @@ contract("BitcoinBridge", function(accounts) {
             await ico.enablePurchases(true);
         });
 
-        it("should fail if it's below minimum purchcase");
+        it("should fail if it's below minimum purchase", async function() {
+            await bb.setMinPurchase(toWei(12));
+            var amount = toWei(11);
+            var user = accounts[2];
+            var error = false;
+            try {
+                await bb.registerPendingPayment("bitcoinAddressbitcoinAddressbitcoinAddress", amount, {from: user});
+            } catch(e) {
+                error = true;
+            }
+
+            assert.isTrue(error, "it should ahve thrown an error");
+
+            await bb.setMinPurchase(0);
+        });
     });
 
     describe("confirmPayment", function() {
