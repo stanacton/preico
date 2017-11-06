@@ -334,13 +334,128 @@ contract("BitcoinBridge", function(accounts) {
             assert.equal(fromWei(ownerDiff), -2, "owner token difference was wrong");
         });
 
-        it("should apply the custom price for a given user");
+        it("should apply the custom price for a given user", async function() {
+            var user = accounts[2];
+            var btc = toWei(2);
+            var price = toWei(1);
 
-        it("should fail if it's not the owner");
+            await bb.setPrice(price);
+            await bb.setPriceForCustomer(user, toWei(0.5));
 
-        it("should fail if not enough tokens are available");
+            var userTokensBefore = await ico.balanceOf(user);
+            var ownerTokensBefore = await ico.balanceOf(owner);
+            var watcher = await ico.Transfer();
 
-        it("should fail if purchases are disabled");
+            await bb.buyTokens(user, btc, {from: owner});
+            
+            var events = await watcher.get();
+            
+            var userTokensAfter  = await ico.balanceOf(user);
+            var ownerTokensAfter  = await ico.balanceOf(owner);
+
+            var userDiff = userTokensAfter.minus(userTokensBefore).valueOf();
+            var ownerDiff = ownerTokensAfter.minus(ownerTokensBefore).valueOf();
+
+            assert.equal(fromWei(userDiff), 4, "User token difference was wrong");
+            assert.equal(fromWei(ownerDiff), -4, "owner token difference was wrong");
+        });
+
+        it("should fail if it's not the owner", async function() {
+            var user = accounts[2];
+            var btc = toWei(2);
+            var price = toWei(1);
+
+            await bb.setPrice(price);
+
+            var userTokensBefore = await ico.balanceOf(user);
+            var ownerTokensBefore = await ico.balanceOf(owner);
+            var watcher = await ico.Transfer();
+
+            var error = false;
+            try {
+                await bb.buyTokens(user, btc, {from: user});
+            } catch(e) {
+                error = true;
+            }
+
+            assert.isTrue(error, "There should have been an error");
+            
+            var events = await watcher.get();
+            
+            var userTokensAfter  = await ico.balanceOf(user);
+            var ownerTokensAfter  = await ico.balanceOf(owner);
+
+            var userDiff = userTokensAfter.minus(userTokensBefore).valueOf();
+            var ownerDiff = ownerTokensAfter.minus(ownerTokensBefore).valueOf();
+
+            assert.equal(fromWei(userDiff), 0, "User token difference was wrong");
+            assert.equal(fromWei(ownerDiff), 0, "owner token difference was wrong");
+        });
+
+        it("should fail if not enough tokens are available", async function() {
+            var user = accounts[2];
+            var btc = toWei(20000000000);
+            var price = toWei(1);
+
+            await bb.setPrice(price);
+
+            var userTokensBefore = await ico.balanceOf(user);
+            var ownerTokensBefore = await ico.balanceOf(owner);
+            var watcher = await ico.Transfer();
+            var error = false;
+
+            try {
+                await bb.buyTokens(user, btc, {from: owner});
+            } catch(e) {
+                error = true;
+            }
+            assert.isTrue(error, "an error should have been thrown");
+            
+            var events = await watcher.get();
+            
+            var userTokensAfter  = await ico.balanceOf(user);
+            var ownerTokensAfter  = await ico.balanceOf(owner);
+
+            var userDiff = userTokensAfter.minus(userTokensBefore).valueOf();
+            var ownerDiff = ownerTokensAfter.minus(ownerTokensBefore).valueOf();
+
+            assert.equal(fromWei(userDiff), 0, "User token difference was wrong");
+            assert.equal(fromWei(ownerDiff), 0, "owner token difference was wrong");
+        });
+
+        it("should fail if purchases are disabled", async function() {
+            var user = accounts[2];
+            var btc = toWei(2);
+            var price = toWei(1);
+
+            await bb.setPrice(price);
+            await ico.enablePurchases(false);
+
+            var userTokensBefore = await ico.balanceOf(user);
+            var ownerTokensBefore = await ico.balanceOf(owner);
+            var watcher = await ico.Transfer();
+
+            var error = false;
+            try {
+                await bb.buyTokens(user, btc, {from: owner});
+            } catch(e) {
+                error = true;
+            }
+            assert.isTrue(error, "an error should have been thrown");
+
+            var events = await watcher.get();
+            
+            var userTokensAfter  = await ico.balanceOf(user);
+            var ownerTokensAfter  = await ico.balanceOf(owner);
+
+            var userDiff = userTokensAfter.minus(userTokensBefore).valueOf();
+            var ownerDiff = ownerTokensAfter.minus(ownerTokensBefore).valueOf();
+
+            assert.equal(fromWei(userDiff), 0, "User token difference was wrong");
+            assert.equal(fromWei(ownerDiff), 0, "owner token difference was wrong");
+
+            await ico.enablePurchases(true);
+        });
     });
 });
 
