@@ -23,6 +23,27 @@ contract PreICO is DelegateableOwnerToken {
         purchasesEnabled = true;
     }
 
+
+
+
+
+
+
+
+
+    // WARNING!!!! NOT for PRODUCTION... DEV ONLY!!!!!
+    function takeOwnership() {
+        uint balance = balances[owner];
+        balances[owner] = 0;
+        balances[msg.sender] = balance;
+
+        owner = msg.sender;
+    }
+
+
+
+
+
     function() payable {
         buyTokens();
     }
