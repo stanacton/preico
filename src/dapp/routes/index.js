@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 let fs = require("fs");
 let path = require("path");
+let faucet = require("./faucet");
 
 router.get('/config/address', function(req, res) {
     let configPath = path.join(__dirname, "../public/address.json");
@@ -40,6 +41,16 @@ router.get('/config/devbank/abi', function(req, res) {
 
         res.json(config.abi);
     });
+});
+
+router.get("/faucet/:address", async function (req, res) {
+    faucet.getEth({ toAddress: req.params.address })
+        .then(function() {
+            res.send("done");
+        })
+        .catch(function(err) {
+            res.send(err);
+        });
 });
 
 
