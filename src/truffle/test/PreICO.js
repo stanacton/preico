@@ -1,6 +1,11 @@
 var PreICO = artifacts.require("../contracts/PreICO.sol");
 
 contract("PreICO", function(accounts) {
+    beforeEach(async function() {
+        var ico = await PreICO.deployed();
+        await ico.enablePurchases(true);
+    })
+
     it("should compile and deploy!!", function(){
         var ownerBalance = 0;
         var owner;
@@ -629,6 +634,7 @@ contract("PreICO", function(accounts) {
  
         it("should return unused eth", async function() {
             var testICO = await PreICO.new(1, toWei(1));
+            await testICO.enablePurchases(true);
             var totalSupply = await testICO.totalSupply.call();
             var price = await testICO.pricePerETH.call();
             var user = accounts[8];

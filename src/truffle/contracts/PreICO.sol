@@ -14,13 +14,12 @@ contract PreICO is DelegateableOwnerToken {
     mapping(address => uint) public customerPrice;
 
     function PreICO(uint256 initialSupply, uint256 price) {
-        totalSupply = initialSupply * (10 ** uint256(decimals));
-      
+        totalSupply = initialSupply * (10 ** uint256(decimals));      
         owner = msg.sender;
         balances[owner] = totalSupply;
         _price = price;
 
-        purchasesEnabled = true;
+        purchasesEnabled = false;
     }
 
     function() payable {
@@ -28,10 +27,9 @@ contract PreICO is DelegateableOwnerToken {
     }
 
     function claimOwnership() onlyPendingOwner public {
-        // TODO: Check ORDER!!!!
-        uint256 ownerBalance = balances[owner];
+        require(pendingOwner != owner);
+        balances[pendingOwner] = balances[owner];
         balances[owner] = 0;
-        balances[pendingOwner] = ownerBalance;
         super.claimOwnership();
     }
 
