@@ -28,6 +28,7 @@ contract PreICO is DelegateableOwnerToken {
     }
 
     function claimOwnership() onlyPendingOwner public {
+        // TODO: Check ORDER!!!!
         uint256 ownerBalance = balances[owner];
         balances[owner] = 0;
         balances[pendingOwner] = ownerBalance;

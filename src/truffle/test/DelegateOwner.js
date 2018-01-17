@@ -23,7 +23,7 @@ contract("DelegateOwner", function (accounts) {
         it("should fail if it's not the owner", async function() {
             var error = false;
             try {
-                await ico.addDelegate(user, { from: account[1] });
+                await ico.addDelegate(user, { from: accounts[1] });
             } catch(e) {
                 error = true;
             }
@@ -47,7 +47,7 @@ contract("DelegateOwner", function (accounts) {
         it("should fail if it's not the owner", async function() {
             var error = false;
             try {
-                await ico.removeDelegate(user, { from: account[1] });
+                await ico.removeDelegate(user, { from: accounts[1] });
             } catch(e) {
                 error = true;
             }

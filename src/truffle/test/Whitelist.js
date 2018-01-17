@@ -118,19 +118,22 @@ contract("Whitelist", function(accounts) {
 
         it("should fail calling transfer", async function () {
             var error = false;
+            await ico.enableWhitelist({ from: owner });
+            await ico.removeFromWhitelist(userAddress);
             try {
-                ico.transfer(account[3], 33, { from: userAddress });
+                await ico.transfer(accounts[3], 33, { from: userAddress });
+                console.log("I did ok");
             } catch(e) {
                 error = true;
             }
-
+            
             assert.isTrue(error, "an exception should have been thrown");
         });
 
         it("should fail calling transferFrom", async function () {
             var error = false;
             try {
-                ico.transferFrom(account[3], account[3], 33, { from: userAddress });
+                await ico.transferFrom(accounts[3], accounts[3], 33, { from: userAddress });
             } catch(e) {
                 error = true;
             }
@@ -141,7 +144,7 @@ contract("Whitelist", function(accounts) {
         it("should fail calling approve", async function () {
             var error = false;
             try {
-                ico.transferFrom(account[3], 33, { from: userAddress });
+                await ico.transferFrom(accounts[3], 33, { from: userAddress });
             } catch(e) {
                 error = true;
             }
@@ -152,7 +155,7 @@ contract("Whitelist", function(accounts) {
         it("should fail calling increaseApproval", async function () {
             var error = false;
             try {
-                ico.increaseApproval(account[3], 33, { from: userAddress });
+                await ico.increaseApproval(accounts[3], 33, { from: userAddress });
             } catch(e) {
                 error = true;
             }
@@ -163,7 +166,7 @@ contract("Whitelist", function(accounts) {
         it("should fail calling decreaseApproval", async function () {
             var error = false;
             try {
-                ico.decreaseApproval(account[3], 33, { from: userAddress });
+                await ico.decreaseApproval(accounts[3], 33, { from: userAddress });
             } catch(e) {
                 error = true;
             }
