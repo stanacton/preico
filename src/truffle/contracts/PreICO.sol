@@ -64,7 +64,7 @@ contract PreICO is DelegateableOwnerToken {
 
     function buyTokens() payable returns (bool) {
         require(purchasesEnabled);
-        require(msg.value > minPurchase);
+        require(msg.value >= minPurchase);
 
         uint multipler = _price;
         uint refundAmount = 0;
@@ -74,6 +74,8 @@ contract PreICO is DelegateableOwnerToken {
         }
 
         uint tokens = this.calculateTokens(msg.value, multipler);
+
+        // Work out if a refund is needed.
         if (balances[owner] < tokens) {
             tokens = balances[owner];
             uint ethCost = calculateTokensPrice(tokens, multipler);
