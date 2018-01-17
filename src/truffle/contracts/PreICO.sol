@@ -112,7 +112,7 @@ contract PreICO is DelegateableOwnerToken {
     }
 
     function withdrawEth() onlyOwner returns (bool) {
-        require(msg.sender.send(this.balance));
+        require(owner.send(this.balance));
         return true;
     }
 
