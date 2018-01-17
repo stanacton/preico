@@ -11,7 +11,7 @@ contract DelegateOwner is Ownable {
     }
 
     function removeDelegate(address delegate) onlyOwner returns (bool) {
-        delete delegates[delegate];
+        delegates[delegate] = false;
         return true;
     }
 
