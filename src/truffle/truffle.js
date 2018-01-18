@@ -13,9 +13,9 @@ module.exports = {
     },
     ropsten:  {
       network_id: 3,
-      host: "172.31.28.63",
+      host: "35.177.155.121",
       port:  8545,
-      gas:   2900000
+      gas:   3900000
  }
   }
 };
