@@ -32,6 +32,66 @@ contract("PreICO", function(accounts) {
         });
     });
 
+    describe("cliamOwnership", function() {
+        it("should transfer the balance to the new owner", async function() {
+            var ico = await PreICO.new(1, toWei(1));
+            var newOwner = accounts[5];
+            var owner = accounts[0];
+
+            await ico.enablePurchases(true);
+            await ico.buyTokens({ value: toWei(3), from: newOwner });
+
+            var ownerBefore = await ico.owner();
+            assert.equal(owner, ownerBefore);
+
+            var ownerBalanceBefore = await ico.balanceOf(owner);
+            var newOwnerBalanceBefore = await ico.balanceOf(newOwner);
+
+            await ico.transferOwnership(newOwner);
+            await ico.claimOwnership({ from: newOwner });
+           
+            var actualNewOwner = await ico.owner();            
+            var ownerBalanceAfter = await ico.balanceOf(owner);
+            var newOwnerBalanceAfter = await ico.balanceOf(newOwner);
+            console.log(newOwnerBalanceAfter.valueOf());
+            var expectedNewOwnerBalance = newOwnerBalanceBefore.add(ownerBalanceBefore);
+
+            assert.equal(0, ownerBalanceAfter.valueOf(), "Owner balance should have been zero");
+            assert.equal(expectedNewOwnerBalance.valueOf(), newOwnerBalanceAfter.valueOf(), "new owner balance was wrong");
+            assert.equal(actualNewOwner, newOwner, "New owner is not the owner");
+        });
+
+        it("should fail if called from not the new owner", async function() {
+            var owner = accounts[0];
+            var testICO = await PreICO.new(1, toWei(1));
+            await testICO.transferOwnership(owner);
+            var error = false;
+
+            try {
+                await testICO.claimOwnership({ from: accounts[4]});
+            } catch(e) {
+                error = true;
+            }
+
+            assert.isTrue(error, "An error should have been thrown.");
+
+        });
+        it("should fail if the owner and the pendingOwner are the same", async function() {
+            var owner = accounts[0];
+            var testICO = await PreICO.new(1, toWei(1));
+            await testICO.transferOwnership(owner);
+            var error = false;
+
+            try {
+                await testICO.claimOwnership();
+            } catch(e) {
+                error = true;
+            }
+
+            assert.isTrue(error, "An error should have been thrown.");
+        });
+    });
+
     describe("transfer", function() { 
         var ico;
         var owner = accounts[0];
