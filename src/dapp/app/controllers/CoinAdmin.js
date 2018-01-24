@@ -311,6 +311,48 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.claimOwnership = function() {
+        ico.claimOwnership(function(err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            alert("Transaction Sent");
+
+            $scope.$apply();
+        });
+    };
+
+    $scope.transferOwnership = function(newAddress) {
+        if (!newAddress) {
+            return alert("newAddress is required.");
+        }
+
+        ico.transferOwnership(newAddress, function(err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            alert("Transaction Sent");
+            $scope.$apply();
+        });
+    };
+
+    $scope.getUserTransactions = function(userAddress) {
+        userAddress = "dummy";
+        if (!userAddress) {
+            return alert("userAddress is required");
+        }
+
+        ico.getUserTransactions(userAddress, function (err, response) {
+            if (err) {
+                return alert(err);
+            }
+
+            console.log(JSON.stringify(response, null, 4));
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });

@@ -318,6 +318,48 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.claimOwnership = function() {
+        ico.claimOwnership(function(err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            alert("Transaction Sent");
+
+            $scope.$apply();
+        });
+    };
+
+    $scope.transferOwnership = function(newAddress) {
+        if (!newAddress) {
+            return alert("newAddress is required.");
+        }
+
+        ico.transferOwnership(newAddress, function(err, response) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            alert("Transaction Sent");
+            $scope.$apply();
+        });
+    };
+
+    $scope.getUserTransactions = function(userAddress) {
+        userAddress = "dummy";
+        if (!userAddress) {
+            return alert("userAddress is required");
+        }
+
+        ico.getUserTransactions(userAddress, function (err, response) {
+            if (err) {
+                return alert(err);
+            }
+
+            console.log(JSON.stringify(response, null, 4));
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
@@ -839,6 +881,47 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function transferOwnership(newOwner, next) {
+            if (!newOwner) {
+                return next({message: "newOwner is required."});
+            }
+
+            getICO().then(function (ico) {
+                ico.transferOwnership.sendTransaction(newOwner, next);
+            });
+        }
+
+        function claimOwnership(next) {
+            getICO().then(function (ico) {
+                ico.claimOwnership.sendTransaction(next);
+            });
+        }
+
+        function getUserTransactions(userAddress, next) {
+            getICO().then(function (ico) {
+                ico.Transfer({to: "0x2175f98baf93c4ed810c71a1e0e9dfbc080fe994"}, {fromBlock: '0', toBlock: 'latest' })
+                    .get(function(err, results) {
+                  if (err) {
+                      return next(err);
+                  } else {
+                      if (!Array.isArray(results)) return next("unexpected results format");
+
+                    var mapped = results.map(function (value) {
+                        return {
+                            from: value.args.from,
+                            to: value.args.to,
+                            value: web3.fromWei(value.args.value).valueOf(),
+                            blockHash: value.blockHash,
+                            blockNumber: value.blockNumber,
+                            transactionHash: value.transactionHash
+                        };
+                    });
+
+                      next(null, mapped);
+                  }
+                });
+            });
+        }
 
         return {
             balance: balance,
@@ -871,7 +954,10 @@ app.config(function ($routeProvider, $locationProvider) {
             takeOwnership: takeOwnership,
             setPriceForCustomer: setPriceForCustomer,
             checkPriceForCustomer: checkPriceForCustomer,
-            unpauseICO: unpauseICO
+            unpauseICO: unpauseICO,
+            claimOwnership: claimOwnership,
+            transferOwnership: transferOwnership,
+            getUserTransactions: getUserTransactions
         };
     }]);
 })();

@@ -13,6 +13,8 @@ contract PreICO is DelegateableOwnerToken {
 
     mapping(address => uint) public customerPrice;
 
+    event Purchased(address indexed user, uint256 tokens, uint256 price);
+
     function PreICO(uint256 initialSupply, uint256 price) {
         totalSupply = initialSupply * (10 ** uint256(decimals));      
         owner = msg.sender;
@@ -90,6 +92,7 @@ contract PreICO is DelegateableOwnerToken {
                require(msg.sender.send(refundAmount));
             }
 
+            Purchased(msg.sender, tokens, multipler);
             Transfer(owner, msg.sender, tokens);
             return true;
         } else {

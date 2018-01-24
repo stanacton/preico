@@ -776,6 +776,8 @@ contract("PreICO", function(accounts) {
                     var customerInitialBalance, customerFinalBalance;
                     var price = toWei(td.price);
                     
+                    var purchasedWatcher = ico.Purchased();
+
                     var payment = toWei(td.eth);
                     var expected = td.expected;
                     var ethBalanceBefore, ethBalanceAfter;
@@ -792,7 +794,13 @@ contract("PreICO", function(accounts) {
                     var cusDiff = customerFinalBalance.minus(customerInitialBalance).valueOf();
                     var ownerDiff = ownerFinalBalance.minus(ownerInitialBalance).valueOf();
                     var ethDiff = ethBalanceAfter.minus(ethBalanceBefore).valueOf();
-                        
+                    
+                    var events = await purchasedWatcher.get();
+                    assert.equal(1, events.length, "Length of Events is wrong.");
+                    assert.equal(events[0].args.user, customerAccount, "Customer account was incorrect");
+                    assert.equal(fromWei(events[0].args.tokens).valueOf(), td.expected, "purchase tokens was incorrect");
+                    assert.equal(fromWei(events[0].args.price).valueOf(), td.price, "purchase price was incorrect");
+
                     assert.equal(fromWei(cusDiff), td.expected, "the customers account should have been credited");
                     assert.equal(fromWei(ownerDiff), 0-td.expected, "the owner account should be less");
                     assert.equal(ethDiff, toWei(td.eth), "ether balance is incorrect");

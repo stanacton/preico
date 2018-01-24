@@ -1,3 +1,4 @@
+
 <div id="page-coin-admin">
     <h2>Coin Settings / admin</h2>
     <div>
@@ -135,7 +136,7 @@
             <button ng-click="withdrawEth()" class="btn btn-danger btn-lg">Withdraw ETH from ICO</button>
         </p>
     </div>
-    
+
     <div class="row admin-action">
         <h3>Refund User</h3>
         <p>This will refund the user the specified number of tokens and ETH.  This will not refund the users whole allocation unless you specify their whole amount.</p>
@@ -178,7 +179,7 @@
             <div class="form-group col-lg-9">
                 <label for="whitelistAddress">User Address</label>
                 <input class="form-control" type="text" id="whitelistAddress" ng-model="whitelistAddress" placeholder="User Address e.g. 0xac89b7s..."
-                    ng-change="checkWhitelistStatus(whitelistAddress)"
+                       ng-change="checkWhitelistStatus(whitelistAddress)"
                 />
             </div>
             <div class="col-lg-3">
@@ -201,7 +202,7 @@
             <div class="form-group col-lg-9">
                 <label for="customerPriceAddress">User Address</label>
                 <input class="form-control" type="text" id="customerPriceAddress" ng-model="customerPriceAddress" placeholder="User Address e.g. 0xac89b7s..."
-                    ng-change="checkPriceForCustomer(customerPriceAddress)"
+                       ng-change="checkPriceForCustomer(customerPriceAddress)"
                 />
             </div>
             <div class="form-group col-lg-9">
@@ -215,5 +216,36 @@
 
         <button class="btn btn-default" ng-click="checkPriceForCustomer(customerPriceAddress)">Check Current Price</button>
         <button class="btn btn-primary" ng-click="setPriceForCustomer(customerPriceAddress, newCustomerPrice)">Set Custom Price</button>
+    </div>
+
+    <div class="row admin-action">
+        <h3>Transfer Ownership</h3>
+        <p>
+            As the owner, you can transfer ownership to someone else by providing their address below.  They must then call 'claimOwnership' to
+            actually become the owner.   Or they can come here and press "Claim Ownership".
+        </p>
+        <div class="row">
+            <div class="form-group col-lg-9">
+                <label for="newOwnerAddress">User Address</label>
+                <input class="form-control" type="text" id="newOwnerAddress" ng-model="newOwnerAddress" placeholder="User Address e.g. 0xac89b7s..."
+                       ng-change=""
+                />
+            </div>
+        </div>
+
+        <button class="btn btn-danger" ng-click="transferOwnership(newOwnerAddress)">Transfer Ownership</button>
+    </div>
+
+    <div class="row admin-action">
+        <h3>Claim Ownership</h3>
+        <p>
+            If someone has called transfer ownership for you. Then you can claim this contract here.
+        </p>
+
+        <button class="btn btn-primary " ng-click="claimOwnership(newOwnerAddress)">Transfer Ownership</button>
+
+
+
+        <button class="btn btn-primary " ng-click="getUserTransactions(newOwnerAddress)">List Transaction</button>
     </div>
 </div>
