@@ -360,6 +360,23 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.getPurchases = function(userAddress) {
+        userAddress = null;
+/*
+        if (!userAddress) {
+            return alert("userAddress is required");
+        }
+*/
+
+        ico.getPurchases(userAddress, function (err, response) {
+            if (err) {
+                return alert(err);
+            }
+
+            console.log(JSON.stringify(response, null, 4));
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
@@ -923,6 +940,32 @@ app.config(function ($routeProvider, $locationProvider) {
             });
         }
 
+        function getPurchases(userAddress, next) {
+            getICO().then(function (ico) {
+                ico.Purchased({to: userAddress}, {fromBlock: '0', toBlock: 'latest' })
+                    .get(function(err, results) {
+                  if (err) {
+                      return next(err);
+                  } else {
+                      if (!Array.isArray(results)) return next("unexpected results format");
+
+                    var mapped = results.map(function (value) {
+                        return {
+                            user: value.args.user,
+                            tokens: web3.fromWei(value.args.tokens).valueOf(),
+                            price: web3.fromWei(value.args.tokens).valueOf(),
+                            blockHash: value.blockHash,
+                            blockNumber: value.blockNumber,
+                            transactionHash: value.transactionHash
+                        };
+                    });
+
+                      next(null, mapped);
+                  }
+                });
+            });
+        }
+
         return {
             balance: balance,
             balanceOf: balanceOf,
@@ -957,6 +1000,7 @@ app.config(function ($routeProvider, $locationProvider) {
             unpauseICO: unpauseICO,
             claimOwnership: claimOwnership,
             transferOwnership: transferOwnership,
+            getPurchases: getPurchases,
             getUserTransactions: getUserTransactions
         };
     }]);

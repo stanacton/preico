@@ -409,6 +409,32 @@
             });
         }
 
+        function getPurchases(userAddress, next) {
+            getICO().then(function (ico) {
+                ico.Purchased({to: userAddress}, {fromBlock: '0', toBlock: 'latest' })
+                    .get(function(err, results) {
+                  if (err) {
+                      return next(err);
+                  } else {
+                      if (!Array.isArray(results)) return next("unexpected results format");
+
+                    var mapped = results.map(function (value) {
+                        return {
+                            user: value.args.user,
+                            tokens: web3.fromWei(value.args.tokens).valueOf(),
+                            price: web3.fromWei(value.args.tokens).valueOf(),
+                            blockHash: value.blockHash,
+                            blockNumber: value.blockNumber,
+                            transactionHash: value.transactionHash
+                        };
+                    });
+
+                      next(null, mapped);
+                  }
+                });
+            });
+        }
+
         return {
             balance: balance,
             balanceOf: balanceOf,
@@ -443,6 +469,7 @@
             unpauseICO: unpauseICO,
             claimOwnership: claimOwnership,
             transferOwnership: transferOwnership,
+            getPurchases: getPurchases,
             getUserTransactions: getUserTransactions
         };
     }]);

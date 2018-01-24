@@ -353,6 +353,23 @@ app.controller("CoinAdminCtrl", ['$scope', 'web3', 'ico', '$rootScope', function
         });
     };
 
+    $scope.getPurchases = function(userAddress) {
+        userAddress = null;
+/*
+        if (!userAddress) {
+            return alert("userAddress is required");
+        }
+*/
+
+        ico.getPurchases(userAddress, function (err, response) {
+            if (err) {
+                return alert(err);
+            }
+
+            console.log(JSON.stringify(response, null, 4));
+        });
+    };
+
     $rootScope.$on("new-block", function (event) {
         updateDetails();
     });
